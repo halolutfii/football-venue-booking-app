@@ -1,7 +1,25 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:football_venue_booking_app/config/env.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
+
+  // firebase init
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: Env.firebaseApiKey,
+      appId: Env.firebaseAppId,
+      messagingSenderId: Env.firebaseSenderId,
+      projectId: Env.firebaseProjectId,
+    ),
+  );
+
+  runApp(MultiProvider(providers: [], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
