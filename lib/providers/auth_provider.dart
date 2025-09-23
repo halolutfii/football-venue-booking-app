@@ -14,13 +14,13 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
 
-  Future<bool> signInWithEmail(String email, String password, UserProvider profileProvider) async {
+  Future<bool> signInWithEmail(String email, String password, UserProvider userProvider) async {
     _setLoading(true);
     try {
       _user = await _authService.signInWithEmail(email, password);
 
       if (user != null) {
-        await profileProvider.loadProfile(_user!.uid);
+        await userProvider.loadProfile(user!.uid);
         _user = user;
       }
 
