@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:football_venue_booking_app/config/env.dart';
+import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,6 +10,7 @@ import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 
 import 'screen/home_screen.dart';
+import 'screen/pages/account_screen.dart';
 
 import 'widgets/appbar.dart';
 
@@ -68,7 +70,8 @@ class _MainScreenState extends State<MainScreen> {
   }
   final List<Widget> _screens = [
     HomeScreen(),
-  
+    BookingScreen(),
+    AccountScreen()
   ];
   final List<String> _titles = ['Home', 'Booking', 'Account'];
 
@@ -77,26 +80,6 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _titles[_currentIndex],
-        showDrawer: true, 
-        onSettings: () {   
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: const [
-                  Icon(Icons.check_circle, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text("Settings Clicked!"),
-                ],
-              ),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        },
       ),
       // drawer: AppDrawer(
       //   onItemTap: _changeTab,

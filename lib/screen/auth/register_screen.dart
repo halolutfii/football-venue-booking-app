@@ -117,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             backgroundColor: const Color(0xFF2E3A59),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           child: _isLoading
@@ -139,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Sudah punya akun? "),
+                          const Text("Already have account? "),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushReplacementNamed(context, AppRoutes.login);

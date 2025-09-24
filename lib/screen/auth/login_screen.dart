@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
@@ -119,22 +119,63 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                       ),
                     ),
+                    const SizedBox(height: 12),
+
+                    // GOOGLE SIGN IN BUTTON
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: Image.asset(
+                          "assets/images/google.png", 
+                          height: 20,
+                        ),
+                        label: const Text(
+                          "Sign in with Google",
+                          style: TextStyle(color: Colors.black87, fontSize: 16),
+                        ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        onPressed: () async {
+                          final success = await authProvider.signInWithGoogle();
+                          if (success && mounted) {
+                            Navigator.pushNamed(context, AppRoutes.main);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(authProvider.errorMessage ??
+                                      "Google Sign-In failed")),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("don't have an account yet? "),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, AppRoutes.register);
+                          },
+                          child: Text(
+                            "Register",
+                            style: TextStyle(color: Colors.blue.shade800, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
 
             const SizedBox(height: 12),
-
-            TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.register);
-                      },
-                      child: Text(
-                        "Belum punya akun? Register",
-                        style: GoogleFonts.poppins(color: const Color(0xFF2E3A59)),
-                      ),
-                    ),
             // Footer(),
           ],
         ),
