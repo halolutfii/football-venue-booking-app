@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:football_venue_booking_app/config/env.dart';
+import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';
+import 'package:football_venue_booking_app/services/venue_service.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -32,11 +34,19 @@ void main() async {
   );
 
   runApp(
-    MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ChangeNotifierProvider(create: (_) => UserProvider()),
-    ], 
-    child: MyApp()));
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, VenueProvider>(
+          create: (context) => VenueProvider(authProvider: context.read<AuthProvider>(), service: VenueService()),
+          update: (_, auth, __) =>
+              VenueProvider(authProvider: auth, service: VenueService()),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -51,7 +61,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      initialRoute: AppRoutes.splashscreen, 
+      initialRoute: AppRoutes.splashscreen,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
@@ -68,19 +78,18 @@ class _MainScreenState extends State<MainScreen> {
   void _changeTab(int index) {
     setState(() => _currentIndex = index);
   }
+
   final List<Widget> _screens = [
     HomeScreen(),
     BookingScreen(),
-    AccountScreen()
+    AccountScreen(),
   ];
   final List<String> _titles = ['Home', 'Booking', 'Account'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: _titles[_currentIndex],
-      ),
+      appBar: CustomAppBar(title: _titles[_currentIndex]),
       // drawer: AppDrawer(
       //   onItemTap: _changeTab,
       // ),

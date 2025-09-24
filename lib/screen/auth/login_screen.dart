@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
-
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
-
 import '../../routes.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,7 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool loading = false;
 
-  Widget buildTextField(String label, TextEditingController controller, {bool obscure = false}) {
+  Widget buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool obscure = false,
+  }) {
     return TextField(
       controller: controller,
       obscureText: obscure,
@@ -35,7 +36,10 @@ class _LoginScreenState extends State<LoginScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -51,13 +55,15 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Image.asset("assets/images/solecode.png", height: 180,),
+            Image.asset("assets/images/solecode.png", height: 180),
             const SizedBox(height: 20),
 
             // Card Login
             Card(
               color: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               elevation: 4,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -68,38 +74,68 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 12),
 
                     // PASSWORD INPUT
-                    buildTextField("Password", _passwordController, obscure: true),
+                    buildTextField(
+                      "Password",
+                      _passwordController,
+                      obscure: true,
+                    ),
                     const SizedBox(height: 20),
 
                     // LOGIN BUTTON
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                            onPressed: loading ? null :() async { 
-                            setState(() => loading = true); 
+                        onPressed: loading
+                            ? null
+                            : () async {
+                                setState(() => loading = true);
 
-                            final email = _emailController.text.trim();
-                            final password = _passwordController.text.trim();
-                            final profileProvider = Provider.of<UserProvider>(context, listen: false);
-                            final success =
-                                await authProvider.signInWithEmail(email, password, profileProvider);
+                                final email = _emailController.text.trim();
+                                final password = _passwordController.text
+                                    .trim();
+                                final profileProvider =
+                                    Provider.of<UserProvider>(
+                                      context,
+                                      listen: false,
+                                    );
+                                final success = await authProvider
+                                    .signInWithEmail(
+                                      email,
+                                      password,
+                                      profileProvider,
+                                    );
 
-                            if (success && profileProvider.user != null) {
-                              if (profileProvider.user!.role == "admin") {
-                                Navigator.pushReplacementNamed(context, AppRoutes.main);
-                              } else {
-                                Navigator.pushReplacementNamed(context, AppRoutes.main);
-                              }
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(
-                                        authProvider.errorMessage ?? "Login failed")),
-                              );
-                            }
+                                if (success && profileProvider.user != null) {
+                                  if (profileProvider.user!.role == "admin") {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      AppRoutes.main,
+                                    );
+                                  } else if (profileProvider.user!.role ==
+                                      "owner") {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      AppRoutes.ownerHome,
+                                    );
+                                  } else {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      AppRoutes.main,
+                                    );
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        authProvider.errorMessage ??
+                                            "Login failed",
+                                      ),
+                                    ),
+                                  );
+                                }
 
-                            setState(() => loading = false);
-                          },
+                                setState(() => loading = false);
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2E3A59),
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -108,7 +144,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: loading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
                             : Text(
                                 "Login",
                                 style: GoogleFonts.poppins(
@@ -126,19 +164,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         icon: Image.asset(
-                          "assets/images/google.png", 
+                          "assets/images/google.png",
                           height: 20,
                         ),
                         label: const Text(
                           "Sign in with Google",
                           style: TextStyle(color: Colors.black87, fontSize: 16),
                         ),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                        ),
                         onPressed: () async {
                           final success = await authProvider.signInWithGoogle();
                           if (success && mounted) {
@@ -146,8 +184,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content: Text(authProvider.errorMessage ??
-                                      "Google Sign-In failed")),
+                                content: Text(
+                                  authProvider.errorMessage ??
+                                      "Google Sign-In failed",
+                                ),
+                              ),
                             );
                           }
                         },
@@ -161,11 +202,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text("don't have an account yet? "),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushReplacementNamed(context, AppRoutes.register);
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.register,
+                            );
                           },
                           child: Text(
                             "Register",
-                            style: TextStyle(color: Colors.blue.shade800, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: Colors.blue.shade800,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
