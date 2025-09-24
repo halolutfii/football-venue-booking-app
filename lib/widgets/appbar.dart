@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
-  final VoidCallback? onBack;
-  final VoidCallback? onSettings;
-  final bool showDrawer;
   final PreferredSizeWidget? bottom;
 
   const CustomAppBar({
     Key? key,
     this.title,
-    this.onBack,
-    this.onSettings,
-    this.showDrawer = false,
     this.bottom,
   }) : super(key: key);
 
@@ -28,21 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: const Color(0xFF2E3A59),
-      leading: showDrawer
-          ? Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu, color: Colors.white),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
-            )
-          : (onBack != null
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: onBack,
-                )
-              : null),
+      automaticallyImplyLeading: false,
       title: title != null && title!.isNotEmpty
           ? Text(
               title!,
@@ -53,13 +33,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       centerTitle: true,
-      actions: [
-        if (onSettings != null)
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: onSettings,
-          ),
-      ],
       bottom: bottom, 
     );
   }

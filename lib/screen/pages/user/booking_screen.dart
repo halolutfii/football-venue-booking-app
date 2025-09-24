@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../../widgets/appbar.dart';
-
-import '../../../routes.dart';
 
 class BookingScreen extends StatelessWidget {
   const BookingScreen({super.key});
@@ -26,7 +23,8 @@ class BookingScreen extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-          
+            Center(child: Text('Booked content')),
+            Center(child: Text('History content')),
           ],
         ),
       ),
