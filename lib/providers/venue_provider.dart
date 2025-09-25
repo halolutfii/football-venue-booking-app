@@ -240,6 +240,8 @@ class VenueProvider extends ChangeNotifier {
   }
 
   void resetForm() {
+    _venue = null;
+
     nameController.clear();
     addressController.clear();
     descriptionController.clear();

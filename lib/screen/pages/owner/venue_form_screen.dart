@@ -25,16 +25,21 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.venueId != null) {
+    final venueProvider = context.read<VenueProvider>();
+
+    if (widget.isUpdateForm && widget.venueId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<VenueProvider>().loadVenueById(widget.venueId!);
+        venueProvider.loadVenueById(widget.venueId!);
       });
+    } else {
+      venueProvider.resetForm();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final VenueProvider venueProvider = context.watch<VenueProvider>();
+    print("isUpdate: ${widget.isUpdateForm}");
 
     return Scaffold(
       appBar: AppBar(
