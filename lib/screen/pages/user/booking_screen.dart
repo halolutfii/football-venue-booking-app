@@ -9,12 +9,12 @@ class BookingScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         appBar: const CustomAppBar(
           bottom: TabBar(
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
+            // indicatorColor: Colors.white,
+            // labelColor: Colors.white,
+            // unselectedLabelColor: Colors.white70,
             tabs: [
               Tab(text: "Book"),
               Tab(text: "History"),

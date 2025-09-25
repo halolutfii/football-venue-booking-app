@@ -33,6 +33,7 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
             final venue = venueProvider.venues[index];
 
             return Card(
+              color: Colors.white,
               child: ListTile(
                 title: Text(venue.name),
                 subtitle: Text(venue.description!),

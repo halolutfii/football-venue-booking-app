@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +23,7 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      // backgroundColor: const Color(0xFFF8F9FA),
       body: Consumer<UserProvider>(
         builder: (context, profileProvider, child) {
           if (profileProvider.isLoading) {

@@ -5,16 +5,12 @@ import 'package:football_venue_booking_app/config/env.dart';
 import 'package:football_venue_booking_app/config/navigation_config.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
-import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';
 import 'package:football_venue_booking_app/services/venue_service.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
-
-import 'screen/pages/home_screen.dart';
-import 'screen/pages/account_screen.dart';
 
 import 'widgets/appbar.dart';
 
@@ -65,6 +61,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.poppinsTextTheme(),
+        scaffoldBackgroundColor: Color(0xFFF8F9FA),
+        appBarTheme: AppBarTheme(backgroundColor: Color(0xFFF8F9FA)),
       ),
       initialRoute: AppRoutes.splashscreen,
       onGenerateRoute: AppRoutes.generateRoute,
