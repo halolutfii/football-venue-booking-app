@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:football_venue_booking_app/config/env.dart';
+import 'package:football_venue_booking_app/config/navigation_config.dart';
+import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';
 import 'package:football_venue_booking_app/services/venue_service.dart';
@@ -11,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 
-import 'screen/home_screen.dart';
+import 'screen/pages/home_screen.dart';
 import 'screen/pages/account_screen.dart';
 
 import 'widgets/appbar.dart';
@@ -39,7 +41,10 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProxyProvider<AuthProvider, VenueProvider>(
-          create: (context) => VenueProvider(authProvider: context.read<AuthProvider>(), service: VenueService()),
+          create: (context) => VenueProvider(
+            authProvider: context.read<AuthProvider>(),
+            service: VenueService(),
+          ),
           update: (_, auth, __) =>
               VenueProvider(authProvider: auth, service: VenueService()),
         ),
@@ -68,6 +73,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
+  final UserRole role;
+
+  const MainScreen({super.key, required this.role});
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -79,41 +88,25 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _currentIndex = index);
   }
 
-  final List<Widget> _screens = [
-    HomeScreen(),
-    BookingScreen(),
-    AccountScreen(),
-  ];
-  final List<String> _titles = ['Home', 'Booking', 'Account'];
-
   @override
   Widget build(BuildContext context) {
+    final pages = getPages(widget.role);
+    final navItems = getBottomNavItems(widget.role);
+    final titles = getTitles(widget.role);
+
     return Scaffold(
-      appBar: CustomAppBar(title: _titles[_currentIndex]),
+      appBar: CustomAppBar(title: titles[_currentIndex]),
       // drawer: AppDrawer(
       //   onItemTap: _changeTab,
       // ),
-      body: _screens[_currentIndex],
+      body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFF2E3A59),
         currentIndex: _currentIndex,
         selectedItemColor: Colors.white,
         unselectedItemColor: const Color.fromARGB(255, 213, 213, 213),
         onTap: _changeTab,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Booking',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_outlined),
-            label: 'Account',
-          ),
-        ],
+        items: navItems,
       ),
     );
   }

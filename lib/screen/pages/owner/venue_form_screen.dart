@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -39,6 +40,11 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
       appBar: AppBar(
         title: Text('Form Screen'),
         automaticallyImplyLeading: false,
+        leading: IconButton(onPressed: () => Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.main,
+                        arguments: UserRole.owner
+                      ), icon: Icon(Icons.arrow_back_ios_new_rounded)),
       ),
       body: SafeArea(
         child: Padding(
@@ -110,16 +116,6 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
               Row(
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pushReplacementNamed(
-                        context,
-                        AppRoutes.ownerHome,
-                      ),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
-                  SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {

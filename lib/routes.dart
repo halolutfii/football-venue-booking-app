@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.dart';
-import 'package:football_venue_booking_app/screen/pages/owner/owner_home_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'main.dart';
 import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
@@ -13,11 +14,13 @@ class AppRoutes {
   static const String register = '/register';
   static const String ownerHome = '/ownerHome';
   static const String ownerForm = '/ownerForm';
+  static const String adminHome = '/adminHome';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case main:
-        return MaterialPageRoute(builder: (_) => MainScreen());
+        final role = settings.arguments as UserRole;
+        return MaterialPageRoute(builder: (_) => MainScreen(role: role));
       case splashscreen:
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case login:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -106,23 +107,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     );
 
                                 if (success && profileProvider.user != null) {
-                                  if (profileProvider.user!.role == "admin") {
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      AppRoutes.main,
-                                    );
-                                  } else if (profileProvider.user!.role ==
-                                      "owner") {
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      AppRoutes.ownerHome,
-                                    );
-                                  } else {
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      AppRoutes.main,
-                                    );
-                                  }
+                                  UserRole role = profileProvider.user!.role
+                                      .toUserRole();
+
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    AppRoutes.main,
+                                    arguments: role,
+                                  );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

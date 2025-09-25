@@ -25,10 +25,6 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
     final venueProvider = context.watch<VenueProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Owner Home'),
-        automaticallyImplyLeading: false,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(

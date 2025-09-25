@@ -16,14 +16,14 @@ class BookingScreen extends StatelessWidget {
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
             tabs: [
-              Tab(text: "Booked"),
+              Tab(text: "Book"),
               Tab(text: "History"),
             ],
           ),
         ),
         body: const TabBarView(
           children: [
-            Center(child: Text('Booked content')),
+            Center(child: Text('Book content')),
             Center(child: Text('History content')),
           ],
         ),
