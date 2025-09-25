@@ -16,6 +16,7 @@ class VenueProvider extends ChangeNotifier {
   final contactController = TextEditingController();
 
   List<VenueModel> _venues = [];
+  VenueModel? _venue;
   String? _errorMessage;
   bool _isLoading = false;
   String? _locationPermission;
@@ -23,6 +24,7 @@ class VenueProvider extends ChangeNotifier {
   double? _longitude;
 
   List<VenueModel> get venues => _venues;
+  VenueModel? get venue => _venue;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
   String? get locationPermission => _locationPermission;
@@ -65,8 +67,10 @@ class VenueProvider extends ChangeNotifier {
         descriptionController.text = venue.description ?? '';
         contactController.text = venue.contact ?? '';
         addressController.text = venue.address ?? '';
+
         _latitude = venue.locationLat ?? 0.0;
         _longitude = venue.locationLong ?? 0.0;
+        _venue = venue;
       }
     } catch (e) {
       _errorMessage = e.toString();

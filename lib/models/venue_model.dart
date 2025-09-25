@@ -28,7 +28,7 @@ class VenueModel {
           ? double.tryParse(data['location_lat'])
           : null,
       locationLong: data['location_long'] != null
-          ? double.tryParse(data['location_lat'])
+          ? double.tryParse(data['location_long'])
           : null,
       address: data['address'],
       description: data['description'],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
+import 'package:football_venue_booking_app/screen/pages/owner/detail_venue_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'main.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String register = '/register';
   static const String ownerHome = '/ownerHome';
   static const String ownerForm = '/ownerForm';
+  static const String ownerDetailVenue = '/ownerDetailVenue';
   static const String adminHome = '/adminHome';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -37,6 +39,8 @@ class AppRoutes {
             venueId: args['venueId'] as String?,
           ),
         );
+      case ownerDetailVenue:
+        return MaterialPageRoute(builder: (_) => DetailVenueScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

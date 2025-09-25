@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/providers/field_provider.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,8 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final venueProvider = context.watch<VenueProvider>();
+    final VenueProvider venueProvider = context.watch<VenueProvider>();
+    final FieldProvider fieldProvider = context.read<FieldProvider>();
 
     return Scaffold(
       body: Padding(
@@ -66,11 +68,14 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                   },
                   icon: Icon(Icons.delete),
                 ),
-                onTap: () {
+                onTap: () async {
+                  await venueProvider.loadVenueById(venue.venueId!);
+                  await fieldProvider.loadFields(venue.venueId);
+
                   Navigator.pushNamed(
                     context,
-                    AppRoutes.ownerForm,
-                    arguments: {"isUpdateForm": true, "venueId": venue.venueId},
+                    AppRoutes.ownerDetailVenue,
+                    arguments: {"venueId": venue.venueId},
                   );
                 },
               ),
@@ -79,7 +84,7 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
+        onPressed: () {
           Navigator.pushNamed(
             context,
             AppRoutes.ownerForm,

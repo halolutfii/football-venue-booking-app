@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:football_venue_booking_app/config/env.dart';
 import 'package:football_venue_booking_app/config/navigation_config.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
+import 'package:football_venue_booking_app/providers/field_provider.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/services/venue_service.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ void main() async {
           update: (_, auth, __) =>
               VenueProvider(authProvider: auth, service: VenueService()),
         ),
+        ChangeNotifierProvider(create: (_) => FieldProvider()),
       ],
       child: MyApp(),
     ),

@@ -38,13 +38,29 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Form Screen'),
+        title: Text(
+          'Form Screen',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: IconButton(onPressed: () => Navigator.pushReplacementNamed(
-                        context,
-                        AppRoutes.main,
-                        arguments: UserRole.owner
-                      ), icon: Icon(Icons.arrow_back_ios_new_rounded)),
+        leading: IconButton(
+          onPressed: () {
+            if (widget.isUpdateForm) {
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.ownerDetailVenue,
+              );
+            } else {
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.main,
+                arguments: UserRole.owner,
+              );
+            }
+          },
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -55,60 +71,11 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      _buildTextField(
-                        'Venue Name',
-                        venueProvider.nameController,
-                      ),
-                      const SizedBox(height: 16),
+                      _buildVenueForm(context, venueProvider),
 
-                      _buildTextField(
-                        'Description',
-                        venueProvider.descriptionController,
-                      ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
-                      _buildTextField(
-                        'Contact',
-                        venueProvider.contactController,
-                        phoneFormatter,
-                      ),
-                      const SizedBox(height: 16),
-
-                      _buildTextField(
-                        'Venue Address',
-                        venueProvider.addressController,
-                      ),
-                      const SizedBox(height: 16),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              venueProvider.latitude == null &&
-                                      venueProvider.longitude == null
-                                  ? "Location is not found"
-                                  : "Lat: ${venueProvider.latitude}, Lng: ${venueProvider.longitude}",
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await venueProvider.getLocation(context);
-
-                              if (venueProvider.locationPermission != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      venueProvider.locationPermission!,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Text("Set Location"),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildFieldForm(context, venueProvider),
                     ],
                   ),
                 ),
@@ -175,10 +142,11 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
 Widget _buildTextField(
   String label,
-  TextEditingController controller, [
+  TextEditingController controller, {
   TextInputFormatter? inputFormatter,
-]) {
-  return TextField(
+  int? maxLines,
+}) {
+  return TextFormField(
     controller: controller,
     decoration: InputDecoration(
       labelText: label,
@@ -192,5 +160,82 @@ Widget _buildTextField(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
     inputFormatters: inputFormatter != null ? [inputFormatter] : [],
+    maxLines: maxLines,
+  );
+}
+
+Widget _buildVenueForm(BuildContext context, VenueProvider venueProvider) {
+  final phoneFormatter = MaskTextInputFormatter(
+    mask: '+62 ###-####-####',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  return Card(
+    color: Colors.white,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Venue",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+
+          _buildTextField('Venue Name', venueProvider.nameController),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            'Description',
+            venueProvider.descriptionController,
+            maxLines: 3,
+          ),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            'Contact',
+            venueProvider.contactController,
+            inputFormatter: phoneFormatter,
+          ),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            'Venue Address',
+            venueProvider.addressController,
+            maxLines: 2,
+          ),
+          const SizedBox(height: 16),
+
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  venueProvider.latitude == null &&
+                          venueProvider.longitude == null
+                      ? "Location is not found"
+                      : "Lat: ${venueProvider.latitude}, Lng: ${venueProvider.longitude}",
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await venueProvider.getLocation(context);
+
+                  if (venueProvider.locationPermission != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(venueProvider.locationPermission!),
+                      ),
+                    );
+                  }
+                },
+                child: Text("Set Location"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    ),
   );
 }
