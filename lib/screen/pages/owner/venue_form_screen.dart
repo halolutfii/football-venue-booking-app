@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
+import 'package:football_venue_booking_app/widgets/text_field.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
@@ -27,24 +29,23 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
     super.initState();
     final venueProvider = context.read<VenueProvider>();
 
-    if (widget.isUpdateForm && widget.venueId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isUpdateForm && widget.venueId != null) {
         venueProvider.loadVenueById(widget.venueId!);
-      });
-    } else {
-      venueProvider.resetForm();
-    }
+      } else {
+        venueProvider.resetForm();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final VenueProvider venueProvider = context.watch<VenueProvider>();
-    print("isUpdate: ${widget.isUpdateForm}");
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Form Screen',
+          'Venue Form',
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -55,6 +56,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
               Navigator.pushReplacementNamed(
                 context,
                 AppRoutes.ownerDetailVenue,
+                arguments: venueProvider.venue!.venueId,
               );
             } else {
               Navigator.pushReplacementNamed(
@@ -91,7 +93,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (widget.venueId != null) {
+                        if (widget.isUpdateForm && widget.venueId != null) {
                           await venueProvider.editVenue(widget.venueId!);
 
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -100,6 +102,12 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                                 "Venue updated successfully!",
                               ),
                             ),
+                          );
+
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.ownerDetailVenue,
+                            arguments: widget.venueId,
                           );
                         } else {
                           await venueProvider.addVenue();
@@ -110,6 +118,12 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                                 "Venue created successfully!",
                               ),
                             ),
+                          );
+
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.main,
+                            arguments: UserRole.owner,
                           );
                         }
 
@@ -122,11 +136,6 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
                           return;
                         }
-
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.ownerHome,
-                        );
                       },
                       child: venueProvider.isLoading
                           ? const CircularProgressIndicator()
@@ -143,30 +152,6 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
       ),
     );
   }
-}
-
-Widget _buildTextField(
-  String label,
-  TextEditingController controller, {
-  TextInputFormatter? inputFormatter,
-  int? maxLines,
-}) {
-  return TextFormField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(color: Colors.grey[700]),
-      filled: true,
-      fillColor: Colors.grey[100],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    ),
-    inputFormatters: inputFormatter != null ? [inputFormatter] : [],
-    maxLines: maxLines,
-  );
 }
 
 Widget _buildVenueForm(BuildContext context, VenueProvider venueProvider) {
@@ -188,38 +173,82 @@ Widget _buildVenueForm(BuildContext context, VenueProvider venueProvider) {
           ),
           const SizedBox(height: 8),
 
-          _buildTextField('Venue Name', venueProvider.nameController),
+          textField('Venue Name', venueProvider.nameController),
           const SizedBox(height: 16),
 
-          _buildTextField(
+          textField(
             'Description',
             venueProvider.descriptionController,
             maxLines: 3,
           ),
           const SizedBox(height: 16),
 
-          _buildTextField(
+          textField(
             'Contact',
             venueProvider.contactController,
             inputFormatter: phoneFormatter,
           ),
           const SizedBox(height: 16),
 
-          _buildTextField(
+          textField(
             'Venue Address',
             venueProvider.addressController,
             maxLines: 2,
           ),
           const SizedBox(height: 16),
 
+          venueProvider.latitude != null && venueProvider.longitude != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    height: 200,
+                    child: FlutterMap(
+                      options: MapOptions(
+                        initialCenter: LatLng(
+                          venueProvider.latitude ?? 0.0,
+                          venueProvider.longitude ?? 0.0,
+                        ),
+                        initialZoom: 16,
+                      ),
+
+                      children: [
+                        TileLayer(
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName:
+                              'com.example.football_venue_booking_app',
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: LatLng(
+                                venueProvider.latitude ?? 0.0,
+                                venueProvider.longitude ?? 0.0,
+                              ),
+                              width: 40,
+                              height: 40,
+                              child: const Icon(
+                                Icons.location_on,
+                                size: 40,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : const Center(child: Text("Location not available")),
+
           Row(
             children: [
               Expanded(
                 child: Text(
-                  venueProvider.latitude == null &&
-                          venueProvider.longitude == null
-                      ? "Location is not found"
-                      : "Lat: ${venueProvider.latitude}, Lng: ${venueProvider.longitude}",
+                  venueProvider.latitude != null &&
+                          venueProvider.longitude != null
+                      ? "Lat: ${venueProvider.latitude}, Lng: ${venueProvider.longitude}"
+                      : "",
                 ),
               ),
               ElevatedButton(

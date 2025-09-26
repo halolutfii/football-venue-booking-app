@@ -68,14 +68,11 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                   },
                   icon: Icon(Icons.delete),
                 ),
-                onTap: () async {
-                  await venueProvider.loadVenueById(venue.venueId!);
-                  await fieldProvider.loadFields(venue.venueId);
-
+                onTap: () {
                   Navigator.pushNamed(
                     context,
                     AppRoutes.ownerDetailVenue,
-                    arguments: {"venueId": venue.venueId},
+                    arguments: venue.venueId,
                   );
                 },
               ),

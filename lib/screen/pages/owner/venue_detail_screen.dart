@@ -8,8 +8,24 @@ import 'package:football_venue_booking_app/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
 
-class DetailVenueScreen extends StatelessWidget {
-  const DetailVenueScreen({super.key});
+class VenueDetailScreen extends StatefulWidget {
+  final String venueId;
+
+  const VenueDetailScreen({super.key, required this.venueId});
+
+  @override
+  State<VenueDetailScreen> createState() => _VenueDetailScreenState();
+}
+
+class _VenueDetailScreenState extends State<VenueDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<VenueProvider>().loadVenueById(widget.venueId);
+      context.read<FieldProvider>().loadFields(widget.venueId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +33,12 @@ class DetailVenueScreen extends StatelessWidget {
     final fieldProvider = context.watch<FieldProvider>().fields;
     // final fieldProvider = context.watch<FieldProvider>();
 
-    // print("screen: ${venueProvider!.name}");
-    // print("screen: ${venueProvider.description}");
-    // print("screen: ${venueProvider.contact}");
-    // print("screen: ${venueProvider.address}");
-    // print("screen: ${venueProvider.locationLat}");
-    // print("screen: ${venueProvider.locationLong}");
-
     return venueProvider.isLoading
         ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : venueProvider.errorMessage != null
         ? Scaffold(body: Center(child: Text(venueProvider.errorMessage!)))
+        : venueProvider.venue == null
+        ? const Scaffold(body: Center(child: Text("Venue not found")))
         : Scaffold(
             appBar: AppBar(
               title: Text(
@@ -138,6 +149,10 @@ class DetailVenueScreen extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () =>
+                  Navigator.pushNamed(context, AppRoutes.ownerFormField),
             ),
           );
   }
