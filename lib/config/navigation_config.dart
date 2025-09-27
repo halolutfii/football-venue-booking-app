@@ -5,12 +5,17 @@ import 'package:football_venue_booking_app/screen/pages/account_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/activity_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/admin/home_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/admin/user_management_screen.dart';
 
 List<Widget> getPages(UserRole role) {
   final pages = <Widget>[];
 
   // add admin screen here
-  if (role == UserRole.admin) {}
+  if (role == UserRole.admin) {
+    pages.add(AdminHomeScreen());
+    pages.add(UserManagementScreen());
+  }
 
   if (role == UserRole.owner) {
     pages.add(OwnerHomeScreen());
@@ -33,6 +38,15 @@ List<BottomNavigationBarItem> getBottomNavItems(UserRole role) {
   items.add(
     BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
   );
+
+  if (role == UserRole.admin) {
+    items.add(
+      BottomNavigationBarItem(
+        icon: Icon(Icons.people_outline),
+        label: 'User Management',
+      ),
+    );
+  }
 
   if (role == UserRole.owner) {
     items.add(
@@ -63,6 +77,10 @@ List<String> getTitles(UserRole role) {
   final titles = <String>[];
 
   titles.add('Home');
+
+  if (role == UserRole.admin) {
+    titles.add('User Management');
+  }
 
   if (role == UserRole.owner) {
     titles.add('Activity');
