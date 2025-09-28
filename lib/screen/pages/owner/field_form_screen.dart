@@ -79,7 +79,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all( 16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -100,20 +100,23 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                   : null,
                             ),
                             const SizedBox(height: 16),
-                          
+
                             textField(
                               "Default Price",
                               fieldProvider.priceController,
                               validator: (v) => (v == null || v.isEmpty)
                                   ? "Price required"
-                                  : (int.tryParse(v) == null)
-                                  ? "Enter valid number"
+                                  : (int.tryParse(
+                                          v.replaceAll(RegExp(r'[^0-9]'), ''),
+                                        ) ==
+                                        null)
+                                  ? "Enter valid number: $v"
                                   : null,
                               keyboardType: TextInputType.number,
                               inputFormatter: CurrencyInputFormatter(),
                             ),
                             const SizedBox(height: 16),
-                          
+
                             textField(
                               "Specifications",
                               fieldProvider.specController,
@@ -122,7 +125,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                   : null,
                             ),
                             const SizedBox(height: 16),
-                          
+
                             Row(
                               children: [
                                 Expanded(
@@ -132,8 +135,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                     title: const Text("Opening Time"),
                                     subtitle: Text(
                                       fieldProvider.openingTime != null
-                                          ? fieldProvider.openingTime
-                                                .toString()
+                                          ? fieldProvider.openingTime.toString()
                                           : "-",
                                     ),
                                     onTap: () =>
@@ -149,21 +151,18 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                     title: const Text("Closing Time"),
                                     subtitle: Text(
                                       fieldProvider.closingTime != null
-                                          ? fieldProvider.closingTime
-                                                .toString()
+                                          ? fieldProvider.closingTime.toString()
                                           : "-",
                                     ),
-                                    onTap: () => fieldProvider.pickTime(
-                                      context,
-                                      false,
-                                    ),
+                                    onTap: () =>
+                                        fieldProvider.pickTime(context, false),
                                     isThreeLine: true,
                                   ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 16),
-                          
+
                             textField(
                               "Slot Duration (minutes)",
                               fieldProvider.slotDurationController,
@@ -186,13 +185,13 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (!_formKey.currentState!.validate()) return;
-                        
+
                           if (widget.isUpdateForm) {
                             await fieldProvider.editField(
                               widget.fieldId!,
                               widget.venueId,
                             );
-                        
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text(
@@ -200,7 +199,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                 ),
                               ),
                             );
-                        
+
                             Navigator.pushNamed(
                               context,
                               AppRoutes.ownerDetailField,
@@ -208,7 +207,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                             );
                           } else {
                             await fieldProvider.addField(widget.venueId);
-                        
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text(
@@ -216,7 +215,7 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                 ),
                               ),
                             );
-                        
+
                             Navigator.pushNamed(
                               context,
                               AppRoutes.ownerDetailVenue,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
-import 'package:football_venue_booking_app/models/venue_model.dart';
 import 'package:football_venue_booking_app/providers/field_provider.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
+import 'package:football_venue_booking_app/utils/currency_utils.dart';
+import 'package:football_venue_booking_app/widgets/text_display.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -30,19 +31,23 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final venueProvider = context.watch<VenueProvider>();
-    final fieldProvider = context.watch<FieldProvider>().fields;
-    // final fieldProvider = context.watch<FieldProvider>();
+    final fieldProvider = context.watch<FieldProvider>();
 
-    return venueProvider.isLoading
+    return venueProvider.isLoading || fieldProvider.isLoading
         ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-        : venueProvider.errorMessage != null
-        ? Scaffold(body: Center(child: Text(venueProvider.errorMessage!)))
-        : venueProvider.venue == null
-        ? const Scaffold(body: Center(child: Text("Venue not found")))
+        : venueProvider.errorMessage != null ||
+              fieldProvider.errorMessage != null
+        ? Scaffold(
+            body: Center(
+              child: Text(
+                venueProvider.errorMessage ?? fieldProvider.errorMessage ?? '',
+              ),
+            ),
+          )
         : Scaffold(
             appBar: AppBar(
               title: Text(
-                venueProvider.venue!.name,
+                venueProvider.venue?.name ?? "Venue",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
@@ -57,12 +62,86 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.ownerForm,
-                      arguments: {
-                        "isUpdateForm": true,
-                        "venueId": venueProvider.venue!.venueId,
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                      ),
+                      builder: (context) {
+                        return SafeArea(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                title: const Text("Edit venue"),
+                                onTap: () {
+                                  Navigator.pop(context);
+
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.ownerForm,
+                                    arguments: {
+                                      "isUpdateForm": true,
+                                      "venueId": venueProvider.venue!.venueId,
+                                    },
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Delete venue"),
+                                onTap: () {
+                                  Navigator.pop(context);
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("Confirm Delete"),
+                                      content: const Text(
+                                        "Are you sure want to delete venue?",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("Cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            venueProvider.removeVenue(
+                                              widget.venueId,
+                                            );
+
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                  "Field deleted successfully!",
+                                                ),
+                                              ),
+                                            );
+
+                                            Navigator.pushReplacementNamed(
+                                              context,
+                                              AppRoutes.main,
+                                              arguments: UserRole.owner,
+                                            );
+                                          },
+                                          child: const Text(
+                                            "Delete",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
                       },
                     );
                   },
@@ -84,24 +163,24 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildDisplayText(
+                              displayText(
                                 context,
-                                venueProvider.venue!.description,
                                 "Description",
+                                venueProvider.venue?.description ?? '-',
                               ),
                               const SizedBox(height: 16),
 
-                              _buildDisplayText(
+                              displayText(
                                 context,
-                                venueProvider.venue!.contact,
                                 "Contact",
+                                venueProvider.venue?.contact ?? '-',
                               ),
                               const SizedBox(height: 16),
 
-                              _buildDisplayText(
+                              displayText(
                                 context,
-                                venueProvider.venue!.address,
                                 "Address",
+                                venueProvider.venue?.address ?? '-',
                               ),
                               const SizedBox(height: 16),
 
@@ -111,7 +190,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 8),
-                              _buildMap(context, venueProvider.venue!),
+                              _buildMap(context, venueProvider),
                             ],
                           ),
                         ),
@@ -123,7 +202,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                      ...fieldProvider.map(
+                      ...fieldProvider.fields.map(
                         (field) => Card(
                           color: Colors.white,
                           child: ListTile(
@@ -131,15 +210,20 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Rp${field.defaultPrice}"),
+                                Text(CurrencyUtil.format(field.defaultPrice)),
                                 Text("${field.slotDuration} minutes"),
                               ],
                             ),
                             trailing: Column(
                               children: [
-                                Text("Open: ${field.openingTime}"),
-                                Text("Close: ${field.closingTime}"),
+                                Text("Open: ${field.openingTimeStr}"),
+                                Text("Close: ${field.closingTimeStr}"),
                               ],
+                            ),
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              AppRoutes.ownerDetailField,
+                              arguments: field.fieldId,
                             ),
                             isThreeLine: true,
                           ),
@@ -150,43 +234,32 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                 ),
               ),
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, AppRoutes.ownerFormField),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => Navigator.pushNamed(
+                context,
+                AppRoutes.ownerFormField,
+                arguments: {"isUpdateForm": false, "venueId": widget.venueId},
+              ),
+              label: const Text('Add new field'),
+              icon: const Icon(Icons.add),
             ),
           );
   }
 }
 
-Widget _buildDisplayText(BuildContext context, String? data, String title) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 4),
-      Text(data ?? "-"),
-    ],
-  );
-}
-
-Widget _buildMap(BuildContext context, VenueModel venueProvider) {
+Widget _buildMap(BuildContext context, VenueProvider venueProvider) {
   return ClipRRect(
     borderRadius: BorderRadius.circular(10),
     child: SizedBox(
       height: 200,
       child:
-          venueProvider.locationLat != null &&
-              venueProvider.locationLong != null
+          venueProvider.venue?.locationLat != null &&
+              venueProvider.venue?.locationLong != null
           ? FlutterMap(
               options: MapOptions(
                 initialCenter: LatLng(
-                  venueProvider.locationLat!,
-                  venueProvider.locationLong!,
+                  venueProvider.venue!.locationLat!,
+                  venueProvider.venue!.locationLong!,
                 ),
                 initialZoom: 16,
               ),
@@ -201,8 +274,8 @@ Widget _buildMap(BuildContext context, VenueModel venueProvider) {
                   markers: [
                     Marker(
                       point: LatLng(
-                        venueProvider.locationLat!,
-                        venueProvider.locationLong!,
+                        venueProvider.venue!.locationLat!,
+                        venueProvider.venue!.locationLong!,
                       ),
                       width: 40,
                       height: 40,
