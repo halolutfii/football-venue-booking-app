@@ -60,17 +60,18 @@ class VenueProvider extends ChangeNotifier {
 
     notifyListeners();
     try {
-      final venue = await _service.getVenueById(venueId);
+      _venue = await _service.getVenueById(venueId);
 
-      if (venue != null) {
-        nameController.text = venue.name;
-        descriptionController.text = venue.description ?? '';
-        contactController.text = venue.contact ?? '';
-        addressController.text = venue.address ?? '';
+      if (_venue != null) {
+        nameController.text = _venue!.name;
+        descriptionController.text = _venue!.description;
+        contactController.text = _venue!.contact;
+        addressController.text = _venue!.address;
 
-        _latitude = venue.locationLat ?? 0.0;
-        _longitude = venue.locationLong ?? 0.0;
-        _venue = venue;
+        _latitude = _venue!.locationLat;
+        _longitude = _venue!.locationLong;
+      } else {
+        throw "Data venue is not found";
       }
     } catch (e) {
       _errorMessage = e.toString();
@@ -240,6 +241,8 @@ class VenueProvider extends ChangeNotifier {
   }
 
   void resetForm() {
+    _venue = null;
+
     nameController.clear();
     addressController.clear();
     descriptionController.clear();

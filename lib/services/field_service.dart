@@ -22,6 +22,7 @@ class FieldService {
 
   Future<void> createField(FieldModel field) async {
     final docRef = _fields.doc();
+
     final newfield = field.copyWith(fieldId: docRef.id);
 
     await docRef.set(newfield.toJson());
