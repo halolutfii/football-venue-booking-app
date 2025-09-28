@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_detail_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/owner/field_detail_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/owner/field_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'main.dart';
@@ -45,6 +47,20 @@ class AppRoutes {
         final venueId = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => VenueDetailScreen(venueId: venueId),
+        );
+      case ownerFormField:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => FieldFormScreen(
+            isUpdateForm: args['isUpdateForm'] as bool,
+            fieldId: args['fieldId'] as String?,
+            venueId: args['venueId'] as String,
+          ),
+        );
+      case ownerDetailField:
+        final fieldId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => FieldDetailScreen(fieldId: fieldId),
         );
       default:
         return MaterialPageRoute(
