@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserService _userService = UserService();
@@ -259,6 +261,30 @@ class UserProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
 
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword(String userId) async {
+    _setLoading(true);
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        String userEmail = userDoc['email'];  
+
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: userEmail);
+
+        return true;
+      } else {
+        _errorMessage = "User not found in the database.";
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _setLoading(false);
       notifyListeners();
     }
   }

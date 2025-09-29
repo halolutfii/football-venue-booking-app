@@ -52,6 +52,18 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               buildProfileHeader(context, user),
               const SizedBox(height: 20),
               buildAccountInformation(context, user),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => _resetPasswordDialog(context, user.uid),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text("Reset Password", style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold,)),
+              ),
             ],
           ),
         ),
@@ -134,6 +146,46 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       title: Text(title, style: style ?? const TextStyle(fontSize: 16)),
       trailing: trailing,
       onTap: onTap,
+    );
+  }
+
+  void _resetPasswordDialog(BuildContext context, String userId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFFF8F9FA),
+          title: const Text("Reset Password"),
+          content: const Text("Are you sure you want to reset the password? A link will be sent to the user's email to reset it.?"), 
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); 
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Mengirimkan permintaan reset password
+                bool success = await Provider.of<UserProvider>(context, listen: false)
+                    .resetPassword(userId); 
+
+                if (success) {
+                  Navigator.pop(context);  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Password reset request sent. Please check your email.")), 
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Failed to reset password!")), 
+                  );
+                }
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
