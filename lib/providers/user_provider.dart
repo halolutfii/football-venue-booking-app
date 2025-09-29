@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserService _userService = UserService();
@@ -11,9 +13,16 @@ class UserProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
 
   File? _selectedImage;
   File? get selectedImage => _selectedImage;
+
+  List<UserModel> _owners = [];
+  List<UserModel> get owners => _owners;
+  List<UserModel> _users = [];
+  List<UserModel> get users => _users;
 
   void setSelectedImage(File? file) {
     _selectedImage = file;
@@ -30,6 +39,27 @@ class UserProvider extends ChangeNotifier {
   final addressController = TextEditingController();
   final bioController = TextEditingController();
 
+    Future<void> createOwner(String email, String password, String name) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final newOwner = await _userService.createOwner(
+        email: email,
+        password: password,
+        name: name,
+      );
+      users.add(newOwner);
+      await loadOwners(); 
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // load profile dari Firestore
   Future<void> loadProfile(String uid) async {
     _setLoading(true);
@@ -37,13 +67,55 @@ class UserProvider extends ChangeNotifier {
       _user = await _userService.getUserProfile(uid);
 
       if (_user != null) {
-        nameController.text = _user!.name;
+        nameController.text = _user!.name ?? '';
         phoneController.text = _user!.phone ?? '';
         addressController.text = _user!.address ?? '';
       }
       notifyListeners();
     } finally {
       _setLoading(false);
+    }
+  }
+
+  // load all users (role = owner)
+  Future<void> loadOwners() async {
+    _setLoading(true); 
+    try {
+      _owners = await _userService.getOwner(); 
+      _errorMessage = null; 
+    } catch (e) {
+      _errorMessage = e.toString(); 
+    } finally {
+      _setLoading(false); 
+      notifyListeners();
+    }
+  }
+
+  // Fetch the specific owner by uid
+  Future<void> loadUserById(String uid) async {
+    _setLoading(true);
+    try {
+      _user = await _userService.getUserProfile(uid);  
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  // load all users (role = user)
+  Future<void> loadUsers() async {
+    _setLoading(true); 
+    try {
+      _users = await _userService.getUser(); 
+      _errorMessage = null; 
+    } catch (e) {
+      _errorMessage = e.toString(); 
+    } finally {
+      _setLoading(false); 
+      notifyListeners();
     }
   }
 
@@ -154,6 +226,66 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> deleteOwner(String uid) async {
+    _errorMessage = null;
+    _isLoading = true;
+
+    notifyListeners();
+    try {
+      await _userService.deleteUser(uid);
+
+      await loadOwners();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteUser(String uid) async {
+    _errorMessage = null;
+    _isLoading = true;
+
+    notifyListeners();
+    try {
+      await _userService.deleteUser(uid);
+
+      await loadUsers();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword(String userId) async {
+    _setLoading(true);
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        String userEmail = userDoc['email'];  
+
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: userEmail);
+
+        return true;
+      } else {
+        _errorMessage = "User not found in the database.";
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
     }
   }
 

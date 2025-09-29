@@ -2,26 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/auth_provider.dart';
-import '../../providers/user_provider.dart';
-import '../../routes.dart';
+import '../../../../providers/user_provider.dart'; 
+import '../../../../routes.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class AddOwnerScreen extends StatefulWidget {
+  const AddOwnerScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<AddOwnerScreen> createState() => _AddOwnerScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _AddOwnerScreenState extends State<AddOwnerScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // TextField builder for reusability
   Widget buildTextField(String label, TextEditingController controller, {bool obscure = false}) {
     return TextFormField(
       controller: controller,
@@ -48,21 +56,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
+        title: const Text(
+          'Add New Owner',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);  
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-            const SizedBox(height: 40),
-            Image.asset("assets/images/logo_screen.png", height: 180,),
-            const SizedBox(height: 20),
-
               Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -71,14 +88,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      buildTextField("Name", _usernameController),
+                      buildTextField("Name", _nameController),
                       const SizedBox(height: 12),
                       buildTextField("Email", _emailController),
                       const SizedBox(height: 12),
-                      buildTextField("Password", _passwordController, obscure: true),
+                      buildTextField("Password", _passwordController, obscure: _obscurePassword),
                       const SizedBox(height: 20),
-
-                      // Register button
+                      // Create Owner button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -87,29 +103,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               : () async {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);
-
-                                    final email = _emailController.text.trim();
-                                    final password = _passwordController.text.trim();
-                                    final profileProvider = Provider.of<UserProvider>(context, listen: false);
-
                                     try {
-                                      final success = await authProvider.registerWithEmail(email, password, profileProvider);
+                                      // Call the method to create the owner
+                                      await userProvider.createOwner(
+                                        _emailController.text.trim(),
+                                        _passwordController.text.trim(),
+                                        _nameController.text.trim(),
+                                      );
 
-                                      if (success && profileProvider.user != null) {
-                                        Navigator.pushReplacementNamed(context, AppRoutes.main);
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(authProvider.errorMessage ?? "Register failed"),
-                                          ),
-                                        );
+                                      if (mounted) {
+                                        if (userProvider.errorMessage == null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text("Owner created successfully"),
+                                            ),
+                                          );
+                                          Navigator.pop(context); // Navigate back
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(userProvider.errorMessage!),
+                                            ),
+                                          );
+                                        }
                                       }
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Register failed: $e")),
-                                      );
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text("Register failed: $e")),
+                                        );
+                                      }
                                     } finally {
-                                      setState(() => _isLoading = false);
+                                      if (mounted) setState(() => _isLoading = false);
                                     }
                                   }
                                 },
@@ -117,13 +142,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             backgroundColor: const Color(0xFF2E3A59),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: _isLoading
                               ? const CircularProgressIndicator(color: Colors.white)
                               : Text(
-                                  "Register",
+                                  "Create Owner",
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -132,30 +157,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                         ),
                       ),
-
-                      const SizedBox(height: 12),
-
-                      // Already have account
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Already have account? "),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushReplacementNamed(context, AppRoutes.login);
-                            },
-                            child: Text(
-                              "Login",
-                              style: TextStyle(color: Colors.blue.shade800, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
             ],
           ),
         ),

@@ -29,8 +29,18 @@ class UserService {
     return doc.exists;
   }
 
+  // get all role owners 
   Future<List<UserModel>> getOwner() async {
     final snapshot = await user.where("role", isEqualTo: "owner").get();
+
+    return snapshot.docs
+        .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
+
+  // get all role users
+  Future<List<UserModel>> getUser() async {
+    final snapshot = await user.where("role", isEqualTo: "user").get();
 
     return snapshot.docs
         .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))

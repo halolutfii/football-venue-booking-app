@@ -5,10 +5,13 @@ import 'package:football_venue_booking_app/screen/pages/owner/field_detail_scree
 import 'package:football_venue_booking_app/screen/pages/owner/field_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/admin/auth/add_owner_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/admin/auth/detail_user_screen.dart';
 import 'main.dart';
 import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
 import 'screen/auth/register_screen.dart';
+import 'screen/pages/admin/home_screen.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -21,6 +24,8 @@ class AppRoutes {
   static const String ownerFormField = '/ownerFormField';
   static const String ownerDetailField = '/ownerDetailField';
   static const String adminHome = '/adminHome';
+  static const String addOwner = '/addOwner';
+  static const String detailUser = '/detailUser';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -61,6 +66,16 @@ class AppRoutes {
         final fieldId = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => FieldDetailScreen(fieldId: fieldId),
+        );
+      case adminHome:
+        return MaterialPageRoute(builder: (_) => AdminHomeScreen());
+      case addOwner:
+        return MaterialPageRoute(builder: (_) => AddOwnerScreen());
+      case detailUser:
+        final args = settings.arguments as Map<String, dynamic>;
+        final uid = args['uid'];  
+        return MaterialPageRoute(
+          builder: (_) => UserDetailScreen(uid: uid),  
         );
       default:
         return MaterialPageRoute(
