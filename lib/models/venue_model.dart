@@ -2,21 +2,21 @@ class VenueModel {
   final String? venueId;
   final String userId;
   final String name;
-  final double? locationLat;
-  final double? locationLong;
-  final String? address;
-  final String? description;
-  final String? contact;
+  final double locationLat;
+  final double locationLong;
+  final String address;
+  final String description;
+  final String contact;
 
   VenueModel({
     this.venueId,
     required this.userId,
     required this.name,
-    this.locationLat,
-    this.locationLong,
-    this.address,
-    this.description,
-    this.contact,
+    required this.locationLat,
+    required this.locationLong,
+    required this.address,
+    required this.description,
+    required this.contact,
   });
 
   factory VenueModel.fromMap(Map<String, dynamic> data) {
@@ -24,12 +24,8 @@ class VenueModel {
       venueId: data['uid'],
       userId: data['user_id'],
       name: data['name'],
-      locationLat: data['location_lat'] != null
-          ? double.tryParse(data['location_lat'])
-          : null,
-      locationLong: data['location_long'] != null
-          ? double.tryParse(data['location_long'])
-          : null,
+      locationLat: double.parse(data['location_lat']),
+      locationLong: double.parse(data['location_long']),
       address: data['address'],
       description: data['description'],
       contact: data['contact'],

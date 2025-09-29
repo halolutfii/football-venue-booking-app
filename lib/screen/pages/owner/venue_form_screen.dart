@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
+import 'package:football_venue_booking_app/widgets/text_field.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +19,8 @@ class VenueFormScreen extends StatefulWidget {
 }
 
 class _VenueFormScreenState extends State<VenueFormScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   final phoneFormatter = MaskTextInputFormatter(
     mask: '+62 ###-####-####',
     filter: {"#": RegExp(r'[0-9]')},
@@ -25,11 +29,15 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.venueId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<VenueProvider>().loadVenueById(widget.venueId!);
-      });
-    }
+    final venueProvider = context.read<VenueProvider>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isUpdateForm && widget.venueId != null) {
+        venueProvider.loadVenueById(widget.venueId!);
+      } else {
+        venueProvider.resetForm();
+      }
+    });
   }
 
   @override
@@ -39,7 +47,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Form Screen',
+          'Venue Form',
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -50,6 +58,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
               Navigator.pushReplacementNamed(
                 context,
                 AppRoutes.ownerDetailVenue,
+                arguments: venueProvider.venue!.venueId,
               );
             } else {
               Navigator.pushReplacementNamed(
@@ -65,177 +74,245 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildVenueForm(context, venueProvider),
-
-                      const SizedBox(height: 8),
-
-                      // _buildFieldForm(context, venueProvider),
-                    ],
-                  ),
-                ),
-              ),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (widget.venueId != null) {
-                          await venueProvider.editVenue(widget.venueId!);
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                "Venue updated successfully!",
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Venue",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          );
-                        } else {
-                          await venueProvider.addVenue();
+                            const SizedBox(height: 8),
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                "Venue created successfully!",
-                              ),
+                            textField(
+                              'Venue Name',
+                              venueProvider.nameController,
+                              validator: (v) => v == null || v.isEmpty
+                                  ? "Venue name is required"
+                                  : null,
                             ),
-                          );
-                        }
+                            const SizedBox(height: 16),
 
-                        if (venueProvider.errorMessage != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(venueProvider.errorMessage!),
+                            textField(
+                              'Description',
+                              venueProvider.descriptionController,
+                              maxLines: 3,
+                              validator: (v) => v == null || v.isEmpty
+                                  ? "Description is required"
+                                  : v.length < 5
+                                  ? "Description must be at least 5 characters"
+                                  : null,
                             ),
-                          );
+                            const SizedBox(height: 16),
 
-                          return;
-                        }
+                            textField(
+                              'Contact',
+                              venueProvider.contactController,
+                              inputFormatter: phoneFormatter,
+                              validator: (v) => v == null || v.isEmpty
+                                  ? "Contact is required"
+                                  : v.replaceAll(RegExp(r'[^0-9]'), '').length <
+                                        8
+                                  ? "Enter a valid contact number"
+                                  : null,
+                            ),
+                            const SizedBox(height: 16),
 
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.ownerHome,
-                        );
-                      },
-                      child: venueProvider.isLoading
-                          ? const CircularProgressIndicator()
-                          : widget.isUpdateForm
-                          ? const Text('Update Venue')
-                          : const Text('Create Venue'),
+                            textField(
+                              'Venue Address',
+                              venueProvider.addressController,
+                              maxLines: 2,
+                              validator: (v) => v == null || v.isEmpty
+                                  ? "Address is required"
+                                  : v.length < 3
+                                  ? "Addess must be at least 3 characters"
+                                  : null,
+                            ),
+                            const SizedBox(height: 16),
+
+                            venueProvider.latitude != null &&
+                                    venueProvider.longitude != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: SizedBox(
+                                      height: 200,
+                                      child: FlutterMap(
+                                        options: MapOptions(
+                                          initialCenter: LatLng(
+                                            venueProvider.latitude ?? 0.0,
+                                            venueProvider.longitude ?? 0.0,
+                                          ),
+                                          initialZoom: 16,
+                                        ),
+
+                                        children: [
+                                          TileLayer(
+                                            urlTemplate:
+                                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                            userAgentPackageName:
+                                                'com.example.football_venue_booking_app',
+                                          ),
+                                          MarkerLayer(
+                                            markers: [
+                                              Marker(
+                                                point: LatLng(
+                                                  venueProvider.latitude ?? 0.0,
+                                                  venueProvider.longitude ??
+                                                      0.0,
+                                                ),
+                                                width: 40,
+                                                height: 40,
+                                                child: const Icon(
+                                                  Icons.location_on,
+                                                  size: 40,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : const Center(
+                                    child: Text("Location not available"),
+                                  ),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    venueProvider.latitude != null &&
+                                            venueProvider.longitude != null
+                                        ? "Lat: ${venueProvider.latitude}, Lng: ${venueProvider.longitude}"
+                                        : "",
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await venueProvider.getLocation(context);
+
+                                    if (venueProvider.locationPermission !=
+                                        null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            venueProvider.locationPermission!,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text("Set Location"),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (!_formKey.currentState!.validate()) return;
+
+                          if (venueProvider.errorMessage != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(venueProvider.errorMessage!),
+                              ),
+                            );
+
+                            return;
+                          }
+
+                          if (venueProvider.latitude == null &&
+                              venueProvider.longitude == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Please set position latitude and longitude of your venue',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.errorContainer,
+                              ),
+                            );
+
+                            return;
+                          }
+
+                          if (widget.isUpdateForm && widget.venueId != null) {
+                            await venueProvider.editVenue(widget.venueId!);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  "Venue updated successfully!",
+                                ),
+                              ),
+                            );
+
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.ownerDetailVenue,
+                              arguments: widget.venueId,
+                            );
+                          } else {
+                            await venueProvider.addVenue();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  "Venue created successfully!",
+                                ),
+                              ),
+                            );
+
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.main,
+                              arguments: UserRole.owner,
+                            );
+                          }
+                        },
+                        child: venueProvider.isLoading
+                            ? const CircularProgressIndicator()
+                            : widget.isUpdateForm
+                            ? const Text('Update Venue')
+                            : const Text('Create Venue'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
-
-Widget _buildTextField(
-  String label,
-  TextEditingController controller, {
-  TextInputFormatter? inputFormatter,
-  int? maxLines,
-}) {
-  return TextFormField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(color: Colors.grey[700]),
-      filled: true,
-      fillColor: Colors.grey[100],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    ),
-    inputFormatters: inputFormatter != null ? [inputFormatter] : [],
-    maxLines: maxLines,
-  );
-}
-
-Widget _buildVenueForm(BuildContext context, VenueProvider venueProvider) {
-  final phoneFormatter = MaskTextInputFormatter(
-    mask: '+62 ###-####-####',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-
-  return Card(
-    color: Colors.white,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Venue",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-
-          _buildTextField('Venue Name', venueProvider.nameController),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            'Description',
-            venueProvider.descriptionController,
-            maxLines: 3,
-          ),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            'Contact',
-            venueProvider.contactController,
-            inputFormatter: phoneFormatter,
-          ),
-          const SizedBox(height: 16),
-
-          _buildTextField(
-            'Venue Address',
-            venueProvider.addressController,
-            maxLines: 2,
-          ),
-          const SizedBox(height: 16),
-
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  venueProvider.latitude == null &&
-                          venueProvider.longitude == null
-                      ? "Location is not found"
-                      : "Lat: ${venueProvider.latitude}, Lng: ${venueProvider.longitude}",
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  await venueProvider.getLocation(context);
-
-                  if (venueProvider.locationPermission != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(venueProvider.locationPermission!),
-                      ),
-                    );
-                  }
-                },
-                child: Text("Set Location"),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    ),
-  );
 }

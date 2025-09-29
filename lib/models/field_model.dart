@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+
 class FieldModel {
   final String? fieldId;
   final String venueId;
   final String name;
   final int defaultPrice;
   final String specifications;
-  final String openingTime;
-  final String closingTime;
+  final TimeOfDay openingTime;
+  final TimeOfDay closingTime;
   final int slotDuration;
 
   FieldModel({
@@ -25,8 +27,8 @@ class FieldModel {
     name: data['name'],
     defaultPrice: (data['default_price'] as num).toInt(),
     specifications: data['specifications'],
-    openingTime: data['opening_time'],
-    closingTime: data['closing_time'],
+    openingTime: parseTime(data['opening_time'])!,
+    closingTime: parseTime(data['closing_time'])!,
     slotDuration: (data['slot_duration'] as num).toInt(),
   );
 
@@ -36,8 +38,8 @@ class FieldModel {
     "name": name,
     "default_price": defaultPrice,
     "specifications": specifications,
-    "opening_time": openingTime,
-    "closing_time": closingTime,
+    "opening_time": formatTime(openingTime),
+    "closing_time": formatTime(closingTime),
     "slot_duration": slotDuration,
   };
 
@@ -47,8 +49,8 @@ class FieldModel {
     String? name,
     int? defaultPrice,
     String? specifications,
-    String? openingTime,
-    String? closingTime,
+    TimeOfDay? openingTime,
+    TimeOfDay? closingTime,
     int? slotDuration,
   }) {
     return FieldModel(
@@ -61,5 +63,30 @@ class FieldModel {
       closingTime: closingTime ?? this.closingTime,
       slotDuration: slotDuration ?? this.slotDuration,
     );
+  }
+
+  String get defaultPriceStr => defaultPrice.toString();
+  String get slotDurationStr => slotDuration.toString();
+  String get openingTimeStr => formatTime(openingTime);
+  String get closingTimeStr => formatTime(closingTime);
+
+  static TimeOfDay? parseTime(String? time) {
+    if (time == null || time.isEmpty) return null;
+
+    final parts = time.split(":");
+
+    if (parts.length == 2) {
+      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    }
+
+    return null;
+  }
+
+  static String formatTime(TimeOfDay? time) {
+    if (time == null) return "-";
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+
+    return "$hour:$minute";
   }
 }
