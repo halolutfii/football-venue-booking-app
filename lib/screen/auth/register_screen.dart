@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../routes.dart';
@@ -22,30 +21,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  Widget buildTextField(String label, TextEditingController controller, {bool obscure = false}) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscure,
-      style: GoogleFonts.poppins(),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.poppins(color: Colors.grey[700]),
-        filled: true,
-        fillColor: Colors.grey[100],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return "$label tidak boleh kosong";
-        if (label == "Password" && value.length < 6) return "Password minimal 6 karakter";
-        return null;
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -59,10 +34,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           key: _formKey,
           child: Column(
             children: [
-            const SizedBox(height: 40),
-            Image.asset("assets/images/logo_screen.png", height: 180,),
-            const SizedBox(height: 20),
-
+              const SizedBox(height: 40),
+              Image.asset("assets/images/logo_screen.png", height: 180),
+              const SizedBox(height: 20),
               Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -77,8 +51,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 12),
                       buildTextField("Password", _passwordController, obscure: true),
                       const SizedBox(height: 20),
-
-                      // Register button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -88,25 +60,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);
 
+                                    final name = _usernameController.text.trim();
                                     final email = _emailController.text.trim();
                                     final password = _passwordController.text.trim();
                                     final profileProvider = Provider.of<UserProvider>(context, listen: false);
 
                                     try {
-                                      final success = await authProvider.registerWithEmail(email, password, profileProvider);
+                                      final success = await authProvider.registerWithEmail(email, password, name, profileProvider);
 
-                                      if (success && profileProvider.user != null) {
-                                        Navigator.pushReplacementNamed(context, AppRoutes.main);
+                                      if (success) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(authProvider.errorMessage ?? "Please verify your email.")),
+                                        );
+                                        
+                                        Navigator.pushReplacementNamed(context, AppRoutes.login);  
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(authProvider.errorMessage ?? "Register failed"),
-                                          ),
+                                          SnackBar(content: Text(authProvider.errorMessage ?? "Registration failed")),
                                         );
                                       }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Register failed: $e")),
+                                        SnackBar(content: Text("Registration failed: $e")),
                                       );
                                     } finally {
                                       setState(() => _isLoading = false);
@@ -132,14 +107,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Already have account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Already have account? "),
+                          const Text("Already have an account? "),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushReplacementNamed(context, AppRoutes.login);
@@ -160,6 +132,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  // TextField for registration
+  Widget buildTextField(String label, TextEditingController controller, {bool obscure = false}) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscure,
+      style: GoogleFonts.poppins(),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.poppins(color: Colors.grey[700]),
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) return "$label tidak boleh kosong";
+        if (label == "Password" && value.length < 6) return "Password minimal 6 karakter";
+        return null;
+      },
     );
   }
 }

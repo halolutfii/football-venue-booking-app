@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:football_venue_booking_app/config/user_role.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
+import 'package:football_venue_booking_app/config/user_role.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../routes.dart';
@@ -95,16 +94,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 final password = _passwordController.text
                                     .trim();
                                 final profileProvider =
-                                    Provider.of<UserProvider>(
-                                      context,
-                                      listen: false,
-                                    );
+                                    Provider.of<UserProvider>(context,
+                                        listen: false);
                                 final success = await authProvider
                                     .signInWithEmail(
-                                      email,
-                                      password,
-                                      profileProvider,
-                                    );
+                                  email,
+                                  password,
+                                  profileProvider,
+                                );
 
                                 if (success && profileProvider.user != null) {
                                   UserRole role = profileProvider.user!.role
@@ -116,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     arguments: role,
                                   );
                                 } else {
+                                  // Menampilkan pesan error jika login gagal atau email belum diverifikasi
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
@@ -213,9 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 12),
-            // Footer(),
           ],
         ),
       ),

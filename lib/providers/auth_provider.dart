@@ -14,6 +14,7 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
 
+   // fungsi untuk sign-in dengan email dan password
   Future<bool> signInWithEmail(
     String email,
     String password,
@@ -24,6 +25,15 @@ class AuthProvider extends ChangeNotifier {
       _user = await _authService.signInWithEmail(email, password);
 
       if (_user != null) {
+        //mengecek apakah email sudah diverifikasi
+        if (!_user!.emailVerified) {
+          _errorMessage = "Please verify your email before logging in.";
+          _user = null; // set user to null karena login gagal
+          notifyListeners();
+          return false;
+        }
+
+        // Jika email sudah diverifikasi, load profile pengguna
         await userProvider.loadProfile(user!.uid);
       }
 
@@ -39,19 +49,28 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // fungsi untuk registrasi dengan email dan password
   Future<bool> registerWithEmail(
     String email,
     String password,
+    String name,
     UserProvider userProvider,
   ) async {
     _setLoading(true);
     try {
-      _user = await _authService.registerWithEmail(email, password);
+      _user = await _authService.registerWithEmail(email, name, password);
 
-      // simpan ke Firestore pakai UserProvider
+      // simpan profile pengguna ke Firestore
       await userProvider.loadProfile(user!.uid);
 
-      _errorMessage = null;
+      // cek apakah email telah diverifikasi
+      if (_user != null && !_user!.emailVerified) {
+        // jika email belum diverifikasi, beri tahu pengguna
+        _errorMessage = "Verification email sent. Please check your inbox.";
+      } else {
+        _errorMessage = null;
+      }
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -61,6 +80,13 @@ class AuthProvider extends ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  // fungsi untuk mengecek status verifikasi email
+  Future<bool> checkEmailVerification() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload(); // pastikan data terbaru
+    return user?.emailVerified ?? false;
   }
 
   Future<bool> signInWithGoogle() async {

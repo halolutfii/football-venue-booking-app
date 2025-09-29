@@ -27,23 +27,26 @@ class AuthService {
   }
 
   // Register with Email & Password
-  Future<User?> registerWithEmail(String email, String password) async {
+  Future<User?> registerWithEmail(String email, String name, String password) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // buat profile default di Fitestore
+      // buat profile default di Firestore
       final user = credential.user;
       if (user != null) {
         final profile = UserModel(
-          uid: user.uid, 
-          name: user.email!.split('@')[0], 
-          email: user.email!, 
+          uid: user.uid,
+          name: name,
+          email: user.email!,
           role: 'user',
         );
         await _userService.createUserProfile(profile);
+
+        // kirim email verifikasi setelah pendaftaran
+        await user.sendEmailVerification();
       }
 
       return credential.user;
@@ -94,7 +97,4 @@ class AuthService {
     await _auth.signOut();
     await _googleSignIn.signOut();
   }
-
-  // Get current user
-  User? get currentUser => _auth.currentUser;
 }

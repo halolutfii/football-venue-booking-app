@@ -62,25 +62,34 @@ class UserService {
   }
 
   Future<UserModel> createOwner({
-    required String email,
-    required String password,
-    required String name,
-    String role = "owner",
-  }) async {
-    final credential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
+  required String email,
+  required String password,
+  required String name,
+  String role = "owner",
+}) async {
+  // Membuat akun owner di Firebase Authentication
+  final credential = await FirebaseAuth.instance
+      .createUserWithEmailAndPassword(email: email, password: password);
 
-    final profile = UserModel(
-      uid: credential.user!.uid,
-      name: name,
-      email: email,
-      role: role,
-    );
+  final profile = UserModel(
+    uid: credential.user!.uid,
+    name: name,
+    email: email,
+    role: role,
+  );
 
-    await user.doc(profile.uid).set(profile.toMap());
+  // Menyimpan profil owner di Firestore
+  await user.doc(profile.uid).set(profile.toMap());
 
-    return profile;
-  }
+  // Mengirim email verifikasi
+  await credential.user?.sendEmailVerification();
+
+  // Menambahkan log untuk memverifikasi bahwa email sudah dikirim
+  print("Email verification sent to: ${credential.user!.email}");
+
+  return profile;
+}
+
 
   Future<void> deleteUser(String uid) async {
     await user.doc(uid).delete();
