@@ -12,6 +12,8 @@ import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
 import 'screen/auth/register_screen.dart';
 import 'screen/pages/admin/home_screen.dart';
+import 'screen/pages/detail_account_screen.dart';
+import 'screen/pages/update_account_screen.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -26,6 +28,8 @@ class AppRoutes {
   static const String adminHome = '/adminHome';
   static const String addOwner = '/addOwner';
   static const String detailUser = '/detailUser';
+  static const String personalInformation = '/personalInformation';
+  static const String updateAccount = '/updateAccount';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -77,6 +81,10 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => UserDetailScreen(uid: uid),  
         );
+      case personalInformation:
+        return MaterialPageRoute(builder: (_) => DetailAccountScreen());
+      case updateAccount:
+        return MaterialPageRoute(builder: (_) => UpdateAccountScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

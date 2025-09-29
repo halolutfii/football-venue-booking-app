@@ -9,6 +9,7 @@ import 'package:football_venue_booking_app/providers/venue_provider.dart';
 import 'package:football_venue_booking_app/services/venue_service.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
@@ -30,6 +31,12 @@ void main() async {
       messagingSenderId: Env.firebaseSenderId,
       projectId: Env.firebaseProjectId,
     ),
+  );
+
+  // supabase init
+  await Supabase.initialize(
+    url: Env.supabaseURL,
+    anonKey: Env.supabaseAnonKey
   );
 
   runApp(

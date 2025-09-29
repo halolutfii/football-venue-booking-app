@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 
 class UserService {
   final CollectionReference user =
       FirebaseFirestore.instance.collection('users');
-  // final SupabaseClient _supabase = Supabase.instance.client;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<void> createUserProfile(UserModel profile) async {
     await user.doc(profile.uid).set(profile.toMap());
@@ -95,17 +96,17 @@ class UserService {
     await user.doc(uid).delete();
   }
 
-  // Future<String> uploadProfilePhoto(String uid, File file) async {
-  //   final fileName = 'public/$uid/${file.uri.pathSegments.last}';
+  Future<String> uploadProfilePhoto(String uid, File file) async {
+    final fileName = 'public/$uid/${file.uri.pathSegments.last}';
 
-  //   final response = await _supabase.storage
-  //       .from('profile-photos')
-  //       .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
+    final response = await _supabase.storage
+        .from('profile-photos')
+        .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
 
-  //   final url = _supabase.storage.from('profile-photos').getPublicUrl(fileName);
+    final url = _supabase.storage.from('profile-photos').getPublicUrl(fileName);
 
-  //   await employees.doc(uid).update({'photo': url});
+    await user.doc(uid).update({'photo': url});
 
-  //   return url;
-  // }
+    return url;
+  }
 }

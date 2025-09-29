@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/routes.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/user_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
+import '../../routes.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -62,7 +64,9 @@ class AccountScreen extends StatelessWidget {
                       const Text("My Account",
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 10),
-                      buildListTile(Icons.person, "Personal Information", onTap: () {}),
+                      buildListTile(Icons.person, "Personal Information", onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.personalInformation);
+                      }),
                       buildListTile(Icons.privacy_tip, "Privacy Policy", onTap: () {}),
                       buildListTile(Icons.settings, "Setting", onTap: () {}),
 
