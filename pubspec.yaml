@@ -49,6 +49,7 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   flutter_map: ^6.2.1
   intl: ^0.20.2
+  pie_chart: ^5.0.0
 
 dev_dependencies:
   flutter_test:

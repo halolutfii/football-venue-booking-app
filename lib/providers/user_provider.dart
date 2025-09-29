@@ -24,6 +24,9 @@ class UserProvider extends ChangeNotifier {
   List<UserModel> _users = [];
   List<UserModel> get users => _users;
 
+  Map<String, double> _chartData = {};
+  Map<String, double> get chartData => _chartData;
+
   void setSelectedImage(File? file) {
     _selectedImage = file;
     notifyListeners();
@@ -39,7 +42,7 @@ class UserProvider extends ChangeNotifier {
   final addressController = TextEditingController();
   final bioController = TextEditingController();
 
-    Future<void> createOwner(String email, String password, String name) async {
+  Future<void> createOwner(String email, String password, String name) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -74,6 +77,33 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     } finally {
       _setLoading(false);
+    }
+  }
+
+  // load all users and owners for pie chart
+  Future<void> loadUsersAndOwners() async {
+    _setLoading(true);
+    try {
+      // Load all owners and users
+      await loadOwners();
+      await loadUsers();
+
+      // Hitung jumlah owner dan user
+      final ownerCount = _owners.length;
+      final userCount = _users.length;
+
+      // Update data untuk pie chart
+      _chartData = {
+        "Owner ($ownerCount)": ownerCount.toDouble(),
+        "User ($userCount)": userCount.toDouble(),
+      };
+
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _setLoading(false);
+      notifyListeners();
     }
   }
 
