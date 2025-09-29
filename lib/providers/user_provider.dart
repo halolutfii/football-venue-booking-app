@@ -37,10 +37,9 @@ class UserProvider extends ChangeNotifier {
 
   // controllers
   final nameController = TextEditingController();
-  final professionController = TextEditingController();
   final phoneController = TextEditingController();
+  final genderController = TextEditingController();
   final addressController = TextEditingController();
-  final bioController = TextEditingController();
 
   Future<void> createOwner(String email, String password, String name) async {
     _isLoading = true;
@@ -149,52 +148,24 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  // update profile ke Firestore
-  // Future<void> updateProfile() async {
-  //   if (_user == null) return;
-  //   if (!formKey.currentState!.validate()) return;
-
-  //   _setLoading(true);
-  //   try {
-  //     final updated = Users(
-  //       uid: _user!.uid,
-  //       email: _user!.email,
-  //       name: nameController.text,
-  //       profession: professionController.text,
-  //       phone: phoneController.text,
-  //       address: addressController.text,
-  //       bio: bioController.text,
-  //       photo: _user!.photo, // nanti bisa diganti URL upload foto
-  //       role: _user!.role,
-  //     );
-
-  //     await _userService.updateUserProfile(updated);
-  //     _user = updated;
-  //     notifyListeners();
-  //   } finally {
-  //     _setLoading(false);
-  //   }
-  // }
-
    // upload foto profile ke Supabase
-  // Future<String> uploadProfilePhoto(File file) async {
-  //   if (_user == null) throw Exception("User not loaded");
-  //   final url = await _userService.uploadProfilePhoto(_user!.uid, file);
-  //   _user = UserModel(
-  //     uid: _user!.uid,
-  //     email: _user!.email,
-  //     name: _user!.name,
-  
-  //     phone: _user!.phone,
-  //     address: _user!.address,
-
-  //     photo: url,
-  //     role: _user!.role,
-  //   );
+  Future<String> uploadProfilePhoto(File file) async {
+    if (_user == null) throw Exception("User not loaded");
+    final url = await _userService.uploadProfilePhoto(_user!.uid, file);
+    _user = UserModel(
+      uid: _user!.uid,
+      email: _user!.email,
+      name: _user!.name,
+      phone: _user!.phone,
+      gender: _user!.gender,
+      address: _user!.address,
+      photo: url,
+      role: _user!.role,
+    );
     
-  //   notifyListeners();
-  //   return url;
-  // }
+    notifyListeners();
+    return url;
+  }
 
   // update profile + optional upload foto baru
   Future<void> updateProfileWithPhoto({File? newPhoto}) async {
@@ -205,18 +176,17 @@ class UserProvider extends ChangeNotifier {
     try {
       String? photoUrl = _user!.photo;
 
-      // if (newPhoto != null) {
-      //   photoUrl = await uploadProfilePhoto(newPhoto); // Upload foto baru
-      // }
+      if (newPhoto != null) {
+        photoUrl = await uploadProfilePhoto(newPhoto); // Upload foto baru
+      }
 
       final updated = UserModel(
         uid: _user!.uid,
         email: _user!.email,
         name: nameController.text,
-      
         phone: phoneController.text,
+        gender: genderController.text,
         address: addressController.text,
-    
         photo: photoUrl,
         role: _user!.role,
       );
@@ -332,10 +302,9 @@ class UserProvider extends ChangeNotifier {
   @override
   void dispose() {
     nameController.dispose();
-    professionController.dispose();
     phoneController.dispose();
+    genderController.dispose();
     addressController.dispose();
-    bioController.dispose();
     super.dispose();
   }
 }
