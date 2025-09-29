@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
-<<<<<<< HEAD
-
-=======
 import 'package:football_venue_booking_app/screen/pages/owner/venue_detail_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/field_detail_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/field_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
->>>>>>> 189c4229b3d28d0e546f982339b9eadbd9415851
+import 'package:football_venue_booking_app/screen/pages/admin/auth/add_owner_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/admin/auth/detail_user_screen.dart';
 import 'main.dart';
 import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
 import 'screen/auth/register_screen.dart';
-import 'screen/pages/owner/detail_venue_screen.dart';
-import 'screen/pages/owner/home_screen.dart';
-import 'screen/pages/owner/venue_form_screen.dart';
-import 'screen/pages/admin/auth/add_owner_screen.dart';
-import 'screen/pages/admin/auth/detail_user_screen.dart';
+import 'screen/pages/admin/home_screen.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -55,18 +49,6 @@ class AppRoutes {
           ),
         );
       case ownerDetailVenue:
-<<<<<<< HEAD
-        return MaterialPageRoute(builder: (_) => DetailVenueScreen());
-      case addOwner:
-        return MaterialPageRoute(builder: (_) => AddOwnerScreen());
-      case detailUser:
-        final args = settings.arguments as Map<String, dynamic>;
-        final uid = args['uid'];  // Pass owner UID to UserDetailScreen
-        return MaterialPageRoute(
-          builder: (_) => UserDetailScreen(uid: uid),  // Pass the UID to UserDetailScreen
-        );
-    
-=======
         final venueId = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => VenueDetailScreen(venueId: venueId),
@@ -85,7 +67,16 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => FieldDetailScreen(fieldId: fieldId),
         );
->>>>>>> 189c4229b3d28d0e546f982339b9eadbd9415851
+      case adminHome:
+        return MaterialPageRoute(builder: (_) => AdminHomeScreen());
+      case addOwner:
+        return MaterialPageRoute(builder: (_) => AddOwnerScreen());
+      case detailUser:
+        final args = settings.arguments as Map<String, dynamic>;
+        final uid = args['uid'];  
+        return MaterialPageRoute(
+          builder: (_) => UserDetailScreen(uid: uid),  
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
