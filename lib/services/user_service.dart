@@ -47,6 +47,20 @@ class UserService {
         .toList();
   }
 
+  Future<List<UserModel>> getDataUsers() async {
+    final userSnapshot = await user.where("role", isEqualTo: "user").get();
+    final ownerSnapshot = await user.where("role", isEqualTo: "owner").get();
+
+    final combinedSnapshot = [
+      ...userSnapshot.docs,
+      ...ownerSnapshot.docs
+    ];
+
+    return combinedSnapshot
+        .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<UserModel> createOwner({
     required String email,
     required String password,
