@@ -116,9 +116,7 @@ class AccountScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: provider.selectedImage != null
-                      ? FileImage(provider.selectedImage!)
-                      : (profile != null && profile.photo != null && profile.photo!.isNotEmpty
+                  backgroundImage: (profile != null && profile.photo != null && profile.photo!.isNotEmpty
                           ? NetworkImage(profile.photo!)
                           : null) as ImageProvider<Object>?,
                   child: (provider.selectedImage == null &&

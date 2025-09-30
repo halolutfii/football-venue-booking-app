@@ -52,12 +52,7 @@ class HomeScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(12), 
-                        image: profileProvider.selectedImage != null
-                            ? DecorationImage(
-                                image: FileImage(profileProvider.selectedImage!),
-                                fit: BoxFit.cover,
-                              )
-                            : (profile.photo != null && profile.photo!.isNotEmpty
+                        image: (profile.photo != null && profile.photo!.isNotEmpty
                                 ? DecorationImage(
                                     image: NetworkImage(profile.photo!),
                                     fit: BoxFit.cover,
