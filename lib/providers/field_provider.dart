@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/models/field_model.dart';
 import 'package:football_venue_booking_app/services/field_service.dart';
 import 'package:football_venue_booking_app/utils/currency_utils.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FieldProvider extends ChangeNotifier {
   final FieldService _service = FieldService();
+  final ImagePicker _picker = ImagePicker();
 
   final nameController = TextEditingController();
   final priceController = TextEditingController();
@@ -19,6 +23,7 @@ class FieldProvider extends ChangeNotifier {
   TimeOfDay? closingTime;
   String? openingTimeStr;
   String? closingTimeStr;
+  File? photo;
 
   List<FieldModel> get fields => _fields;
   FieldModel? get field => _field;
@@ -85,7 +90,7 @@ class FieldProvider extends ChangeNotifier {
         slotDuration: int.parse(slotDurationController.text),
       );
 
-      await _service.createField(field);
+      await _service.createField(field, photo!);
       _fields.add(field);
 
       resetForm();
@@ -112,7 +117,7 @@ class FieldProvider extends ChangeNotifier {
         slotDuration: int.parse(slotDurationController.text),
       );
 
-      await _service.updateField(field);
+      await _service.updateField(field, photo!);
 
       resetForm();
       notifyListeners();
@@ -159,6 +164,14 @@ class FieldProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+    }
+  }
+
   void resetForm() {
     nameController.clear();
     priceController.clear();
@@ -167,6 +180,7 @@ class FieldProvider extends ChangeNotifier {
 
     openingTime = null;
     closingTime = null;
+    photo = null;
     _field = null;
 
     notifyListeners();

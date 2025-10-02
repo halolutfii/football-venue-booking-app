@@ -72,7 +72,12 @@ class _FieldDetailScreenState extends State<FieldDetailScreen> {
                           },
                         ),
                         ListTile(
-                          title: const Text("Delete field"),
+                          title: Text(
+                            "Delete field",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
                           onTap: () {
                             Navigator.pop(context);
 
@@ -108,9 +113,13 @@ class _FieldDetailScreenState extends State<FieldDetailScreen> {
                                         arguments: fieldProvider.field!.venueId,
                                       );
                                     },
-                                    child: const Text(
+                                    child: Text(
                                       "Delete",
-                                      style: TextStyle(color: Colors.red),
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.error,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -183,6 +192,31 @@ class _FieldDetailScreenState extends State<FieldDetailScreen> {
                               fieldProvider.field?.closingTimeStr ?? '-',
                             ),
                             const SizedBox(height: 16),
+
+                            displayText(context, "Field Photo", ''),
+                            fieldProvider.field?.fieldPhoto != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      fieldProvider.field!.fieldPhoto!,
+                                      width: double.infinity,
+                                      height: 180,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container(
+                                    width: double.infinity,
+                                    height: 180,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.image_outlined,
+                                      size: 48,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                           ],
                         ),
                       ),

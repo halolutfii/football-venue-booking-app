@@ -90,7 +90,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                                 },
                               ),
                               ListTile(
-                                title: const Text("Delete venue"),
+                                title: Text(
+                                  "Delete venue",
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
                                 onTap: () {
                                   Navigator.pop(context);
 
@@ -206,20 +211,37 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                         (field) => Card(
                           color: Colors.white,
                           child: ListTile(
+                            leading: field.fieldPhoto != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      field.fieldPhoto!,
+                                      width: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container(
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.image_outlined,
+                                      size: 48,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                             title: Text(field.name),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(CurrencyUtil.format(field.defaultPrice)),
-                                Text("${field.slotDuration} minutes"),
-                              ],
-                            ),
-                            trailing: Column(
-                              children: [
                                 Text("Open: ${field.openingTimeStr}"),
                                 Text("Close: ${field.closingTimeStr}"),
                               ],
                             ),
+                            trailing: Text("${field.slotDuration} minutes"),
                             onTap: () => Navigator.pushNamed(
                               context,
                               AppRoutes.ownerDetailField,
@@ -258,8 +280,8 @@ Widget _buildMap(BuildContext context, VenueProvider venueProvider) {
           ? FlutterMap(
               options: MapOptions(
                 initialCenter: LatLng(
-                  venueProvider.venue!.locationLat!,
-                  venueProvider.venue!.locationLong!,
+                  venueProvider.venue!.locationLat,
+                  venueProvider.venue!.locationLong,
                 ),
                 initialZoom: 16,
               ),
@@ -274,8 +296,8 @@ Widget _buildMap(BuildContext context, VenueProvider venueProvider) {
                   markers: [
                     Marker(
                       point: LatLng(
-                        venueProvider.venue!.locationLat!,
-                        venueProvider.venue!.locationLong!,
+                        venueProvider.venue!.locationLat,
+                        venueProvider.venue!.locationLong,
                       ),
                       width: 40,
                       height: 40,
