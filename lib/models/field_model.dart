@@ -9,6 +9,7 @@ class FieldModel {
   final TimeOfDay openingTime;
   final TimeOfDay closingTime;
   final int slotDuration;
+  final String? fieldPhoto;
 
   FieldModel({
     this.fieldId,
@@ -19,6 +20,7 @@ class FieldModel {
     required this.openingTime,
     required this.closingTime,
     required this.slotDuration,
+    this.fieldPhoto,
   });
 
   factory FieldModel.fromMap(Map<String, dynamic> data) => FieldModel(
@@ -30,6 +32,7 @@ class FieldModel {
     openingTime: parseTime(data['opening_time'])!,
     closingTime: parseTime(data['closing_time'])!,
     slotDuration: (data['slot_duration'] as num).toInt(),
+    fieldPhoto: data['field_photo'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -41,6 +44,7 @@ class FieldModel {
     "opening_time": formatTime(openingTime),
     "closing_time": formatTime(closingTime),
     "slot_duration": slotDuration,
+    "field_photo": fieldPhoto ?? '',
   };
 
   FieldModel copyWith({
@@ -52,6 +56,7 @@ class FieldModel {
     TimeOfDay? openingTime,
     TimeOfDay? closingTime,
     int? slotDuration,
+    String? fieldPhoto,
   }) {
     return FieldModel(
       fieldId: fieldId ?? this.fieldId,
@@ -62,6 +67,7 @@ class FieldModel {
       openingTime: openingTime ?? this.openingTime,
       closingTime: closingTime ?? this.closingTime,
       slotDuration: slotDuration ?? this.slotDuration,
+      fieldPhoto: fieldPhoto ?? this.fieldPhoto,
     );
   }
 

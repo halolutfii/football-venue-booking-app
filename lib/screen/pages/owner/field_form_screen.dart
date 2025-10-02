@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:football_venue_booking_app/providers/field_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
 import 'package:football_venue_booking_app/utils/currency_utils.dart';
@@ -28,6 +27,12 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
 
   final priceFormatter = MaskTextInputFormatter(
     mask: 'Rp###.###.###',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
+
+  final durationPerMinutes = MaskTextInputFormatter(
+    mask: '### Minutes',
     filter: {"#": RegExp(r'[0-9]')},
     type: MaskAutoCompletionType.lazy,
   );
@@ -172,7 +177,92 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                                   ? "Enter valid number"
                                   : null,
                               keyboardType: TextInputType.number,
+                              inputFormatter: durationPerMinutes,
                             ),
+                            const SizedBox(height: 16),
+
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: fieldProvider.pickImage,
+                                    icon: const Icon(Icons.image, size: 18),
+                                    label: const Text('Pick Image'),
+                                  ),
+                                  const SizedBox(height: 12),
+
+                                  fieldProvider.photo != null ||
+                                          fieldProvider.field?.fieldPhoto !=
+                                              null
+                                      ? Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: fieldProvider.photo != null
+                                                  ? Image.file(
+                                                      fieldProvider.photo!,
+                                                      width: double.infinity,
+                                                      height: 180,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.network(
+                                                      fieldProvider
+                                                          .field!
+                                                          .fieldPhoto!,
+                                                      width: double.infinity,
+                                                      height: 180,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                            ),
+                                          ],
+                                        )
+                                      : Container(
+                                          width: double.infinity,
+                                          height: 180,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.image_outlined,
+                                            size: 48,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ),
+
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     ElevatedButton.icon(
+                            //       onPressed: fieldProvider.pickImage,
+                            //       icon: const Icon(Icons.image, size: 18),
+                            //       label: const Text('Pick Image'),
+                            //     ),
+                            //     Expanded(
+                            //       child: Align(
+                            //         alignment: Alignment.centerRight,
+                            //         child: fieldProvider.photo != null
+                            //             ? Image.file(
+                            //                 fieldProvider.photo!,
+                            //                 height: 50,
+                            //               )
+                            //             : Text("No image selected"),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),
@@ -185,6 +275,26 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (!_formKey.currentState!.validate()) return;
+
+                          if (fieldProvider.photo == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.errorContainer,
+                                content: Text(
+                                  "Field photo is required",
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onErrorContainer,
+                                  ),
+                                ),
+                              ),
+                            );
+
+                            return;
+                          }
 
                           if (widget.isUpdateForm) {
                             await fieldProvider.editField(
@@ -223,7 +333,9 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                             );
                           }
                         },
-                        child: widget.isUpdateForm
+                        child: fieldProvider.isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : widget.isUpdateForm
                             ? Text('Edit Field')
                             : Text('Add Field'),
                       ),
