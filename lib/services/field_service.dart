@@ -59,4 +59,12 @@ class FieldService {
 
     return _supabase.storage.from('field-photos').getPublicUrl(fileName);
   }
+
+  Future<List<FieldModel>> getAllFields() async {
+    final snapshot = await _fields.get();
+
+    return snapshot.docs
+        .map((doc) => FieldModel.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
 }

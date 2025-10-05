@@ -54,6 +54,22 @@ class VenueProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> loadAllVenues() async {
+    _errorMessage = null;
+    _isLoading = true;
+
+    notifyListeners();
+    try {
+      _venues = await _service.getAllVenues();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
   Future<void> loadVenueById(String venueId) async {
     _errorMessage = null;
     _isLoading = true;
