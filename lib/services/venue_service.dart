@@ -20,6 +20,14 @@ class VenueService {
         .toList();
   }
 
+  Future<List<VenueModel>> getAllVenues() async {
+    final snapshot = await _venues.get();
+
+    return snapshot.docs
+        .map((doc) => VenueModel.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<void> createVenue(VenueModel venue) async {
     final docRef = _venues.doc();
     final newVenue = venue.copyWith(venueId: docRef.id);
