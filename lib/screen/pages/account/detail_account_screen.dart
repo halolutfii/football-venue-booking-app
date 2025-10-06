@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../providers/user_provider.dart';
-import '../../../routes.dart';
+import '../../../../../providers/user_provider.dart';
+import '../../../../routes.dart';
 
 class DetailAccountScreen extends StatefulWidget {
   const DetailAccountScreen({super.key});

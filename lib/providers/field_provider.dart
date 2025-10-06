@@ -30,6 +30,22 @@ class FieldProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
 
+  Future<void> loadAllFields() async {
+    _errorMessage = null;
+    _isLoading = true;
+
+    notifyListeners();
+    try {
+      _fields = await _service.getAllFields();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
   Future<void> loadFields(venueId) async {
     _errorMessage = null;
     _isLoading = true;

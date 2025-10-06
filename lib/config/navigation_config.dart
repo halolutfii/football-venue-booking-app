@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
-import 'package:football_venue_booking_app/screen/pages/home_screen.dart';
-import 'package:football_venue_booking_app/screen/pages/account_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/user/home_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/account/account_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/activity_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';

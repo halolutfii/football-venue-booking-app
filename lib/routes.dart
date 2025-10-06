@@ -12,8 +12,10 @@ import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
 import 'screen/auth/register_screen.dart';
 import 'screen/pages/admin/home_screen.dart';
-import 'screen/pages/detail_account_screen.dart';
-import 'screen/pages/update_account_screen.dart';
+import 'screen/pages/account/detail_account_screen.dart';
+import 'screen/pages/account/update_account_screen.dart';
+import 'screen/pages/user/venue/detail_venue_screen.dart';
+import 'screen/pages/user/field/detail_field_screen.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -30,6 +32,8 @@ class AppRoutes {
   static const String detailUser = '/detailUser';
   static const String personalInformation = '/personalInformation';
   static const String updateAccount = '/updateAccount';
+  static const String detailVenue= '/detailVenue';
+  static const String detailField= '/detailField';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -85,6 +89,16 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => DetailAccountScreen());
       case updateAccount:
         return MaterialPageRoute(builder: (_) => UpdateAccountScreen());
+      case detailVenue:
+        final venueId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => DetailVenueScreen(venueId: venueId),
+        );
+      case detailField:
+        final fieldId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => DetailScreen(fieldId: fieldId),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/user_provider.dart';
+import 'venue/venue_screen.dart';
+
+import '../../../../providers/user_provider.dart';
+import '../../../providers/venue_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -71,7 +74,7 @@ class HomeScreen extends StatelessWidget {
 
                 // judul
                 Text(
-                  "Let's Find The Best Soccer Field",
+                  "Let's Find The Best Venue",
                   style: GoogleFonts.poppins(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -79,7 +82,13 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const Divider(
+                  thickness: 1,
+                  color: Colors.black,
+                  height: 20,
+                ),
+                
+                VenueListScreen(),
 
               ],
             ),
