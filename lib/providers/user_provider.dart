@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
-import '../services/user_service.dart';
+import 'package:football_venue_booking_app/services/schedule_service.dart';
+import 'package:football_venue_booking_app/models/user_model.dart';
+import 'package:football_venue_booking_app/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserService _userService = UserService();
+  final ScheduleService _scheduleService = ScheduleService();
 
   UserModel? _user;
   UserModel? get user => _user;
@@ -53,7 +55,7 @@ class UserProvider extends ChangeNotifier {
         name: name,
       );
       users.add(newOwner);
-      await loadOwners(); 
+      await loadOwners();
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -69,7 +71,7 @@ class UserProvider extends ChangeNotifier {
       _user = await _userService.getUserProfile(uid);
 
       if (_user != null) {
-        nameController.text = _user!.name ?? '';
+        nameController.text = _user!.name;
         phoneController.text = _user!.phone ?? '';
         addressController.text = _user!.address ?? '';
       }
@@ -108,14 +110,14 @@ class UserProvider extends ChangeNotifier {
 
   // load all users (role = owner)
   Future<void> loadOwners() async {
-    _setLoading(true); 
+    _setLoading(true);
     try {
-      _owners = await _userService.getOwner(); 
-      _errorMessage = null; 
+      _owners = await _userService.getOwner();
+      _errorMessage = null;
     } catch (e) {
-      _errorMessage = e.toString(); 
+      _errorMessage = e.toString();
     } finally {
-      _setLoading(false); 
+      _setLoading(false);
       notifyListeners();
     }
   }
@@ -124,7 +126,7 @@ class UserProvider extends ChangeNotifier {
   Future<void> loadUserById(String uid) async {
     _setLoading(true);
     try {
-      _user = await _userService.getUserProfile(uid);  
+      _user = await _userService.getUserProfile(uid);
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();
@@ -136,19 +138,19 @@ class UserProvider extends ChangeNotifier {
 
   // load all users (role = user)
   Future<void> loadUsers() async {
-    _setLoading(true); 
+    _setLoading(true);
     try {
-      _users = await _userService.getUser(); 
-      _errorMessage = null; 
+      _users = await _userService.getUser();
+      _errorMessage = null;
     } catch (e) {
-      _errorMessage = e.toString(); 
+      _errorMessage = e.toString();
     } finally {
-      _setLoading(false); 
+      _setLoading(false);
       notifyListeners();
     }
   }
 
-   // upload foto profile ke Supabase
+  // upload foto profile ke Supabase
   Future<String> uploadProfilePhoto(File file) async {
     if (_user == null) throw Exception("User not loaded");
     final url = await _userService.uploadProfilePhoto(_user!.uid, file);
@@ -162,7 +164,7 @@ class UserProvider extends ChangeNotifier {
       photo: url,
       role: _user!.role,
     );
-    
+
     notifyListeners();
     return url;
   }
@@ -213,10 +215,10 @@ class UserProvider extends ChangeNotifier {
         uid: _user!.uid,
         email: _user!.email,
         name: nameController.text,
-      
+
         phone: phoneController.text,
         address: addressController.text,
-        
+
         photo: _user!.photo,
         role: _user!.role,
       );
@@ -268,10 +270,13 @@ class UserProvider extends ChangeNotifier {
   Future<bool> resetPassword(String userId) async {
     _setLoading(true);
     try {
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
 
       if (userDoc.exists) {
-        String userEmail = userDoc['email'];  
+        String userEmail = userDoc['email'];
 
         await FirebaseAuth.instance.sendPasswordResetEmail(email: userEmail);
 
@@ -285,6 +290,41 @@ class UserProvider extends ChangeNotifier {
       return false;
     } finally {
       _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  void generateSchedule() async {
+    _setLoading(true);
+
+    try {
+      final now = DateTime.now();
+      final twoMonthsLater = DateTime(now.year, now.month + 1, now.day);
+
+      final schedules = await _scheduleService.generateSchedule(
+        fieldId: '4Dm6tgHPqZdOUsDq0HU6',
+        currentDate: now,
+        endDate: twoMonthsLater,
+      );
+
+      schedules.forEach((date, slots) {
+        print('Date: $date');
+        for (var slot in slots) {
+          print(
+            '${slot['start_time']} - ${slot['end_time']} | Rp${slot['price']} | ${slot['status']}',
+          );
+        }
+      });
+
+      print("Total hari digenerate: ${schedules.length}");
+      print("Jadwal: ${schedules.keys}");
+      print("Jadwal hari pertama: ${schedules.keys.first}");
+      print("Jadwal hari terakhir: ${schedules.keys.last}");
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _setLoading(false);
+
       notifyListeners();
     }
   }
