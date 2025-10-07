@@ -81,33 +81,6 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  // load all users and owners for pie chart
-  Future<void> loadUsersAndOwners() async {
-    _setLoading(true);
-    try {
-      // Load all owners and users
-      await loadOwners();
-      await loadUsers();
-
-      // Hitung jumlah owner dan user
-      final ownerCount = _owners.length;
-      final userCount = _users.length;
-
-      // Update data untuk pie chart
-      _chartData = {
-        "Owner ($ownerCount)": ownerCount.toDouble(),
-        "User ($userCount)": userCount.toDouble(),
-      };
-
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-      notifyListeners();
-    }
-  }
-
   // load all users (role = owner)
   Future<void> loadOwners() async {
     _setLoading(true);

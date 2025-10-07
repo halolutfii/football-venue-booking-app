@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
+import 'providers/master_provider.dart';
 
 import 'widgets/appbar.dart';
 
@@ -53,6 +54,7 @@ void main() async {
               VenueProvider(authProvider: auth, service: VenueService()),
         ),
         ChangeNotifierProvider(create: (_) => FieldProvider()),
+        ChangeNotifierProvider(create: (_) => MasterProvider()),
       ],
       child: MyApp(),
     ),
