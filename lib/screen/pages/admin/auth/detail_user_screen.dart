@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/providers/master_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/user_provider.dart';
 
@@ -15,12 +16,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<UserProvider>(context, listen: false).loadUserById(widget.uid);
+    Provider.of<MasterProvider>(context, listen: false).loadUserById(widget.uid);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(builder: (context, userProvider, child) {
+    return Consumer<MasterProvider>(builder: (context, userProvider, child) {
       if (userProvider.isLoading) {
         return const Center(child: CircularProgressIndicator());
       }
@@ -167,7 +168,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             TextButton(
               onPressed: () async {
                 // Mengirimkan permintaan reset password
-                bool success = await Provider.of<UserProvider>(context, listen: false)
+                bool success = await Provider.of<MasterProvider>(context, listen: false)
                     .resetPassword(userId); 
 
                 if (success) {

@@ -52,14 +52,14 @@ class _FieldMasterScreenState extends State<FieldMasterScreen> {
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
                           field.fieldPhoto!,
-                          width: 50,
-                          height: 50,
+                          width: 100,
+                          height: 100,
                           fit: BoxFit.cover,
                         ),
                       )
                     : Container(
-                        width: 50,
-                        height: 50,
+                        width: 100,
+                        height: 100,
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(8),
@@ -73,7 +73,7 @@ class _FieldMasterScreenState extends State<FieldMasterScreen> {
                 title: Text(field.name, style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
                 onTap: () => Navigator.pushNamed(
                   context,
-                  AppRoutes.detailField,
+                  AppRoutes.detailAdminField,
                   arguments: field.fieldId,
                 ),
               ),

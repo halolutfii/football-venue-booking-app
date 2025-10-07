@@ -72,7 +72,7 @@ class _VenueMasterScreenState extends State<VenueMasterScreen> {
 
                   Navigator.pushNamed(
                     context,
-                    AppRoutes.detailVenue,
+                    AppRoutes.detailAdminVenue,
                     arguments: venueId,
                   );
                 },

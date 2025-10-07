@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:football_venue_booking_app/providers/user_provider.dart'; 
+import 'package:football_venue_booking_app/providers/master_provider.dart';
 import 'package:football_venue_booking_app/routes.dart';
 
 class OwnerAccountScreen extends StatefulWidget {
@@ -18,13 +17,13 @@ class _OwnerAccountState extends State<OwnerAccountScreen> {
     super.initState();
 
     Future.microtask(
-      () => Provider.of<UserProvider>(context, listen: false).loadOwners(),
+      () => Provider.of<MasterProvider>(context, listen: false).loadOwners(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserProvider userProvider = context.watch<UserProvider>();
+    final MasterProvider userProvider = context.watch<MasterProvider>();
 
     return Scaffold(
       body: Padding(
@@ -50,7 +49,10 @@ class _OwnerAccountState extends State<OwnerAccountScreen> {
                             ? const Icon(Icons.person, size: 30, color: Colors.grey) 
                             : null,  
                       ),
-                      title: Text(owner.name),
+                      title: Text(
+                        owner.name, 
+                        style: const TextStyle(fontWeight: FontWeight.bold), 
+                      ),
                       subtitle: Text(owner.email),
                       trailing: IconButton(
                         onPressed: () {
@@ -99,7 +101,8 @@ class _OwnerAccountState extends State<OwnerAccountScreen> {
             AppRoutes.addOwner, 
           );
         },
-        child: const Icon(Icons.person_add_alt_1_sharp),
+        child: const Icon(Icons.person_add_alt_1_sharp, color: const Color.fromARGB(255, 71, 70, 70)),
+        backgroundColor: Colors.white, 
       ),
     );
   }

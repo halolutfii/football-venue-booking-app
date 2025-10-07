@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/providers/master_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:football_venue_booking_app/providers/user_provider.dart'; 
@@ -18,13 +19,13 @@ class _UserAccountState extends State<UserAccountScreen> {
     super.initState();
 
     Future.microtask(
-      () => Provider.of<UserProvider>(context, listen: false).loadUsers(),
+      () => Provider.of<MasterProvider>(context, listen: false).loadUsers(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserProvider userProvider = context.watch<UserProvider>();
+    final MasterProvider userProvider = context.watch<MasterProvider>();
 
     return Scaffold(
       body: Padding(
@@ -50,7 +51,10 @@ class _UserAccountState extends State<UserAccountScreen> {
                             ? const Icon(Icons.person, size: 30, color: Colors.grey) 
                             : null,  
                       ),
-                      title: Text(users.name),
+                      title: Text(
+                        users.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold), 
+                      ),
                       subtitle: Text(users.email),
                       trailing: IconButton(
                         onPressed: () {

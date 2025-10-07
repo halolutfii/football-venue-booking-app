@@ -110,10 +110,10 @@ class _MainScreenState extends State<MainScreen> {
       // ),
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF2E3A59),
+        backgroundColor: const Color(0xFFF8F9FA),
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: const Color.fromARGB(255, 213, 213, 213),
+        selectedItemColor: const Color.fromARGB(255, 71, 70, 70),
+        unselectedItemColor: const Color.fromARGB(255, 197, 195, 195),
         onTap: _changeTab,
         items: navItems,
       ),

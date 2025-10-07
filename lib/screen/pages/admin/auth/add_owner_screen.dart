@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../providers/user_provider.dart'; 
+import 'package:football_venue_booking_app/providers/master_provider.dart';
 import '../../../../routes.dart';
 
 class AddOwnerScreen extends StatefulWidget {
@@ -56,7 +55,7 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final masterProvider = Provider.of<MasterProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -105,14 +104,14 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
                                     setState(() => _isLoading = true);
                                     try {
                                       // Call the method to create the owner
-                                      await userProvider.createOwner(
+                                      await masterProvider.createOwner(
                                         _emailController.text.trim(),
                                         _passwordController.text.trim(),
                                         _nameController.text.trim(),
                                       );
 
                                       if (mounted) {
-                                        if (userProvider.errorMessage == null) {
+                                        if (masterProvider.errorMessage == null) {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             const SnackBar(
                                               content: Text("Owner created successfully"),
@@ -122,7 +121,7 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
                                         } else {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
-                                              content: Text(userProvider.errorMessage!),
+                                              content: Text(masterProvider.errorMessage!),
                                             ),
                                           );
                                         }

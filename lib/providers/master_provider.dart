@@ -6,6 +6,8 @@ import 'package:football_venue_booking_app/models/field_model.dart';
 import 'package:football_venue_booking_app/services/user_service.dart';
 import 'package:football_venue_booking_app/services/venue_service.dart';
 import 'package:football_venue_booking_app/services/field_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MasterProvider extends ChangeNotifier { 
   final UserService _serviceUser = UserService();
@@ -17,6 +19,8 @@ class MasterProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  UserModel? _user;
+  UserModel? get user => _user;
   List<UserModel> _owners = [];
   List<UserModel> get owners => _owners;
   List<UserModel> _users = [];
@@ -31,6 +35,42 @@ class MasterProvider extends ChangeNotifier {
   Map<String, double> _chartDataVenueField = {};
   Map<String, double> get chartDataVenueField => _chartDataVenueField;
   
+  // create account role owner
+  Future<void> createOwner(String email, String password, String name) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final newOwner = await _serviceUser.createOwner(
+        email: email,
+        password: password,
+        name: name,
+      );
+      users.add(newOwner);
+      await loadOwners();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+   // Fetch the specific owner by uid
+  Future<void> loadUserById(String uid) async {
+    _setLoading(true);
+    try {
+      _user = await _serviceUser.getUserProfile(uid);
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
+  }
+
   // load all users (role = owner)
   Future<void> loadOwners() async {
     _setLoading(true);
@@ -139,6 +179,70 @@ class MasterProvider extends ChangeNotifier {
       _errorMessage = null;
     } catch (e) {
       _errorMessage = e.toString();
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  // delete account owner
+  Future<void> deleteOwner(String uid) async {
+    _errorMessage = null;
+    _isLoading = true;
+
+    notifyListeners();
+    try {
+      await _serviceUser.deleteUser(uid);
+
+      await loadOwners();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteUser(String uid) async {
+    _errorMessage = null;
+    _isLoading = true;
+
+    notifyListeners();
+    try {
+      await _serviceUser.deleteUser(uid);
+
+      await loadUsers();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword(String userId) async {
+    _setLoading(true);
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        String userEmail = userDoc['email'];
+
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: userEmail);
+
+        return true;
+      } else {
+        _errorMessage = "User not found in the database.";
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
     } finally {
       _setLoading(false);
       notifyListeners();

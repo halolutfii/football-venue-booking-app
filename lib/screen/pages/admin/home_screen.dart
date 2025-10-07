@@ -44,7 +44,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 Center(
                   child: Image.asset(
                     "assets/images/logo_screen.png",
-                    height: 200,
+                    height: 160,
                     width: double.infinity,
                     fit: BoxFit.contain,
                   ),
@@ -55,7 +55,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   child: Text(
                     "Welcome Back, Admin!",
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
@@ -90,7 +90,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 const Divider(
                   thickness: 1,
                   color: Colors.black,
-                  height: 20,
+                  height: 10,
                 ),
 
                 // Pie chart venue dan field

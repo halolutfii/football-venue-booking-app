@@ -16,6 +16,8 @@ import 'screen/pages/account/detail_account_screen.dart';
 import 'screen/pages/account/update_account_screen.dart';
 import 'screen/pages/user/venue/detail_venue_screen.dart';
 import 'screen/pages/user/field/detail_field_screen.dart';
+import 'screen/pages/admin/detail_field_admin_screen.dart';
+import 'screen/pages/admin/detail_venue_admin_screen.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -34,6 +36,8 @@ class AppRoutes {
   static const String updateAccount = '/updateAccount';
   static const String detailVenue= '/detailVenue';
   static const String detailField= '/detailField';
+  static const String detailAdminField = '/detailAdminField';
+  static const String detailAdminVenue = '/detailAdminVenue';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -98,6 +102,16 @@ class AppRoutes {
         final fieldId = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => DetailScreen(fieldId: fieldId),
+        );
+      case detailAdminVenue:
+        final venueId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => DetailVenueAdminScreen(venueId: venueId),
+        );
+      case detailAdminField:
+        final fieldId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => DetailFieldAdminScreen(fieldId: fieldId),
         );
       default:
         return MaterialPageRoute(
