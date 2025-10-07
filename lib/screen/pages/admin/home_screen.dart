@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:pie_chart/pie_chart.dart';
-import '../../../providers/user_provider.dart';
+import '../../../providers/master_provider.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -15,20 +15,23 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<UserProvider>(context, listen: false).loadUsersAndOwners();
+    Future.delayed(Duration.zero, () {
+      Provider.of<MasterProvider>(context, listen: false).loadUsersAndOwners();
+      Provider.of<MasterProvider>(context, listen: false).loadVenuesAndFields();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: Consumer<UserProvider>(
-        builder: (context, userProvider, child) {
-          if (userProvider.isLoading) {
+      body: Consumer<MasterProvider>(
+        builder: (context, masterProvider, child) {
+          if (masterProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (userProvider.chartData.isEmpty) {
+          if (masterProvider.chartData.isEmpty) {
             return const Center(child: Text("No data available for the pie chart."));
           }
 
@@ -41,7 +44,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 Center(
                   child: Image.asset(
                     "assets/images/logo_screen.png",
-                    height: 200,
+                    height: 160,
                     width: double.infinity,
                     fit: BoxFit.contain,
                   ),
@@ -52,7 +55,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   child: Text(
                     "Welcome Back, Admin!",
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
@@ -65,27 +68,51 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   height: 20,
                 ),
 
-                // Pie chart section
+                // Pie chart owner dan user
                 SizedBox(
                   height: 250,
-                  child: PieChart(
-                    dataMap: userProvider.chartData, 
-                    chartType: ChartType.disc, 
-                    legendOptions: LegendOptions(
-                      legendPosition: LegendPosition.left,
-                    ),
-                    chartValuesOptions: ChartValuesOptions(
-                      showChartValues: true,
-                      showChartValuesInPercentage: true,
-                      showChartValuesOutside: false,
-                    ),
-                  ),
+                  child: masterProvider.chartData.isNotEmpty
+                      ? PieChart(
+                          dataMap: masterProvider.chartData,
+                          chartType: ChartType.disc,
+                          legendOptions: LegendOptions(
+                            legendPosition: LegendPosition.left,
+                          ),
+                          chartValuesOptions: ChartValuesOptions(
+                            showChartValues: true,
+                            showChartValuesInPercentage: true,
+                            showChartValuesOutside: false,
+                          ),
+                        )
+                      : const Center(child: Text("No data available for owner/user chart.")),
                 ),
 
                 const Divider(
                   thickness: 1,
                   color: Colors.black,
-                  height: 20,
+                  height: 10,
+                ),
+
+                // Pie chart venue dan field
+                SizedBox(
+                  height: 250,
+                  child: masterProvider.chartDataVenueField.isNotEmpty
+                      ? PieChart(
+                          dataMap: masterProvider.chartDataVenueField,
+                          chartType: ChartType.disc,
+                          legendOptions: LegendOptions(
+                            legendPosition: LegendPosition.left,
+                          ),
+                          chartValuesOptions: ChartValuesOptions(
+                            showChartValues: true,
+                            showChartValuesInPercentage: true,
+                            showChartValuesOutside: false,
+                          ),
+                          colorList: List.generate(masterProvider.chartDataVenueField.length, (index) {
+                            return index.isEven ? Colors.amber : Colors.lightGreen;
+                          }),
+                        )
+                      : const Center(child: Text("No data available for venue/field chart.")),
                 ),
 
               ],

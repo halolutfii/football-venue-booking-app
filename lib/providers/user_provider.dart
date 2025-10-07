@@ -21,14 +21,6 @@ class UserProvider extends ChangeNotifier {
   File? _selectedImage;
   File? get selectedImage => _selectedImage;
 
-  List<UserModel> _owners = [];
-  List<UserModel> get owners => _owners;
-  List<UserModel> _users = [];
-  List<UserModel> get users => _users;
-
-  Map<String, double> _chartData = {};
-  Map<String, double> get chartData => _chartData;
-
   void setSelectedImage(File? file) {
     _selectedImage = file;
     notifyListeners();
@@ -42,27 +34,6 @@ class UserProvider extends ChangeNotifier {
   final phoneController = TextEditingController();
   final genderController = TextEditingController();
   final addressController = TextEditingController();
-
-  Future<void> createOwner(String email, String password, String name) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    try {
-      final newOwner = await _userService.createOwner(
-        email: email,
-        password: password,
-        name: name,
-      );
-      users.add(newOwner);
-      await loadOwners();
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
 
   // load profile dari Firestore
   Future<void> loadProfile(String uid) async {
@@ -78,75 +49,6 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     } finally {
       _setLoading(false);
-    }
-  }
-
-  // load all users and owners for pie chart
-  Future<void> loadUsersAndOwners() async {
-    _setLoading(true);
-    try {
-      // Load all owners and users
-      await loadOwners();
-      await loadUsers();
-
-      // Hitung jumlah owner dan user
-      final ownerCount = _owners.length;
-      final userCount = _users.length;
-
-      // Update data untuk pie chart
-      _chartData = {
-        "Owner ($ownerCount)": ownerCount.toDouble(),
-        "User ($userCount)": userCount.toDouble(),
-      };
-
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-      notifyListeners();
-    }
-  }
-
-  // load all users (role = owner)
-  Future<void> loadOwners() async {
-    _setLoading(true);
-    try {
-      _owners = await _userService.getOwner();
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-      notifyListeners();
-    }
-  }
-
-  // Fetch the specific owner by uid
-  Future<void> loadUserById(String uid) async {
-    _setLoading(true);
-    try {
-      _user = await _userService.getUserProfile(uid);
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-      notifyListeners();
-    }
-  }
-
-  // load all users (role = user)
-  Future<void> loadUsers() async {
-    _setLoading(true);
-    try {
-      _users = await _userService.getUser();
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-      notifyListeners();
     }
   }
 
@@ -228,69 +130,6 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     } finally {
       _setLoading(false);
-    }
-  }
-
-  Future<void> deleteOwner(String uid) async {
-    _errorMessage = null;
-    _isLoading = true;
-
-    notifyListeners();
-    try {
-      await _userService.deleteUser(uid);
-
-      await loadOwners();
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteUser(String uid) async {
-    _errorMessage = null;
-    _isLoading = true;
-
-    notifyListeners();
-    try {
-      await _userService.deleteUser(uid);
-
-      await loadUsers();
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-
-      notifyListeners();
-    }
-  }
-
-  Future<bool> resetPassword(String userId) async {
-    _setLoading(true);
-    try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
-
-      if (userDoc.exists) {
-        String userEmail = userDoc['email'];
-
-        await FirebaseAuth.instance.sendPasswordResetEmail(email: userEmail);
-
-        return true;
-      } else {
-        _errorMessage = "User not found in the database.";
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = e.toString();
-      return false;
-    } finally {
-      _setLoading(false);
-      notifyListeners();
     }
   }
 

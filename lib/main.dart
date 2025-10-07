@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
+import 'providers/master_provider.dart';
 
 import 'widgets/appbar.dart';
 
@@ -53,6 +54,7 @@ void main() async {
               VenueProvider(authProvider: auth, service: VenueService()),
         ),
         ChangeNotifierProvider(create: (_) => FieldProvider()),
+        ChangeNotifierProvider(create: (_) => MasterProvider()),
       ],
       child: MyApp(),
     ),
@@ -108,10 +110,10 @@ class _MainScreenState extends State<MainScreen> {
       // ),
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF2E3A59),
+        backgroundColor: const Color(0xFFF8F9FA),
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: const Color.fromARGB(255, 213, 213, 213),
+        selectedItemColor: const Color.fromARGB(255, 71, 70, 70),
+        unselectedItemColor: const Color.fromARGB(255, 197, 195, 195),
         onTap: _changeTab,
         items: navItems,
       ),
