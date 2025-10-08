@@ -113,15 +113,53 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
                                       if (mounted) {
                                         if (masterProvider.errorMessage == null) {
                                           ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text("Owner created successfully"),
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Icon(Icons.error, color: Colors.white),
+                                                  SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      "Owner created successfully!",
+                                                      style: TextStyle(color: Colors.white),
+                                                      overflow: TextOverflow.visible,  
+                                                      softWrap: true,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.green,
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              duration: const Duration(seconds: 2),
                                             ),
                                           );
                                           Navigator.pop(context); // Navigate back
                                         } else {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
-                                              content: Text(masterProvider.errorMessage!),
+                                              content: Row(
+                                                children: [
+                                                  Icon(Icons.error, color: Colors.white),
+                                                  SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      masterProvider.errorMessage! ?? "Owner created failed!",
+                                                      style: TextStyle(color: Colors.white),
+                                                      overflow: TextOverflow.visible,  
+                                                      softWrap: true,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.red,
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              duration: const Duration(seconds: 2),
                                             ),
                                           );
                                         }
@@ -129,7 +167,28 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
                                     } catch (e) {
                                       if (mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Register failed: $e")),
+                                          SnackBar(
+                                            content: Row(
+                                              children: [
+                                                Icon(Icons.error, color: Colors.white),
+                                                SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    "Register failed: $e",
+                                                    style: TextStyle(color: Colors.white),
+                                                    overflow: TextOverflow.visible,  
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            duration: const Duration(seconds: 2),
+                                          ),
                                         );
                                       }
                                     } finally {

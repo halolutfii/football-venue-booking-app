@@ -116,10 +116,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                   // Menampilkan pesan error jika login gagal atau email belum diverifikasi
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        authProvider.errorMessage ??
-                                            "Login failed",
+                                      content: Row(
+                                        children: [
+                                          Icon(Icons.error, color: Colors.white),
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              authProvider.errorMessage ?? "Login failed.",
+                                              style: TextStyle(color: Colors.white),
+                                              overflow: TextOverflow.visible,  
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                      backgroundColor: Colors.red,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      duration: const Duration(seconds: 2),
                                     ),
                                   );
                                 }
@@ -174,10 +190,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                  authProvider.errorMessage ??
-                                      "Google Sign-In failed",
+                                content: Row(
+                                  children: [
+                                    Icon(Icons.error, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        authProvider.errorMessage ?? "Google Sign-In failed.",
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.visible,  
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
                           }

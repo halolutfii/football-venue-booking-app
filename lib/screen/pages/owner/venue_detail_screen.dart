@@ -118,13 +118,21 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                                               widget.venueId,
                                             );
 
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
+                                            ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
-                                                content: const Text(
-                                                  "Field deleted successfully!",
+                                                content: Row(
+                                                  children: const [
+                                                    Icon(Icons.check_circle, color: Colors.white),
+                                                    SizedBox(width: 8),
+                                                    Text("Field deleted successfully!"),
+                                                  ],
                                                 ),
+                                                backgroundColor: Colors.green,
+                                                behavior: SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                duration: const Duration(seconds: 2),
                                               ),
                                             );
 
