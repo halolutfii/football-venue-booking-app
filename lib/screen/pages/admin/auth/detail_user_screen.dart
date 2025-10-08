@@ -174,11 +174,39 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 if (success) {
                   Navigator.pop(context);  
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Password reset request sent. Please check your email.")), 
+                    SnackBar(
+                      content: Row(
+                        children: const [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text("Password reset request sent. Please check your email!"),
+                        ],
+                      ),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      duration: const Duration(seconds: 2),
+                    ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Failed to reset password!")), 
+                    SnackBar(
+                      content: Row(
+                        children: const [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text("Failed to reset password!"),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      duration: const Duration(seconds: 2),
+                    ),
                   );
                 }
               },

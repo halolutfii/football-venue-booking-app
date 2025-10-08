@@ -206,13 +206,28 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
                                     if (venueProvider.locationPermission !=
                                         null) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text(
-                                            venueProvider.locationPermission!,
+                                          content: Row(
+                                            children: [
+                                              Icon(Icons.error, color: Colors.white),
+                                              SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  venueProvider.locationPermission!,
+                                                  style: TextStyle(color: Colors.white),
+                                                  overflow: TextOverflow.visible,  
+                                                  softWrap: true,
+                                                ),
+                                              ),
+                                            ],
                                           ),
+                                          backgroundColor: Colors.green,
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          duration: const Duration(seconds: 2),
                                         ),
                                       );
                                     }
@@ -239,7 +254,26 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                           if (venueProvider.errorMessage != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(venueProvider.errorMessage!),
+                                content: Row(
+                                  children: [
+                                    Icon(Icons.error, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        venueProvider.errorMessage!,
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.visible,  
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
 
@@ -250,15 +284,19 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                               venueProvider.longitude == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                  'Please set position latitude and longitude of your venue',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
+                                content: Row(
+                                  children: const [
+                                    Icon(Icons.check_circle, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text("Please set position latitude and longitude of your venue!"),
+                                  ],
                                 ),
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.errorContainer,
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
 
@@ -270,9 +308,19 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text(
-                                  "Venue updated successfully!",
+                                content: Row(
+                                  children: const [
+                                    Icon(Icons.check_circle, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text("Venue updated successfully!"),
+                                  ],
                                 ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
 
@@ -286,9 +334,19 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text(
-                                  "Venue created successfully!",
+                                content: Row(
+                                  children: const [
+                                    Icon(Icons.check_circle, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text("Venue created successfully!"),
+                                  ],
                                 ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
 

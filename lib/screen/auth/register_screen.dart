@@ -70,19 +70,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                                       if (success) {
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text(authProvider.errorMessage ?? "Please verify your email.")),
+                                          SnackBar(
+                                            content: Row(
+                                              children: [
+                                                Icon(Icons.error, color: Colors.black),
+                                                SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    authProvider.errorMessage ?? "Please verify your email.",
+                                                    style: TextStyle(color: Colors.black),
+                                                    overflow: TextOverflow.visible,  
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: Colors.yellow,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            duration: const Duration(seconds: 2),
+                                          ),
                                         );
                                         
                                         Navigator.pushReplacementNamed(context, AppRoutes.login);  
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text(authProvider.errorMessage ?? "Registration failed")),
+                                          SnackBar(
+                                            content: Row(
+                                              children: [
+                                                Icon(Icons.error, color: Colors.white),
+                                                SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    authProvider.errorMessage ?? "Registration failed.",
+                                                    style: TextStyle(color: Colors.white),
+                                                    overflow: TextOverflow.visible,  
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            duration: const Duration(seconds: 2),
+                                          ),
                                         );
                                       }
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Registration failed: $e")),
-                                      );
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    authProvider.errorMessage ?? "Registration failed: $e",
+                                                    style: TextStyle(color: Colors.white),
+                                                    overflow: TextOverflow.visible,  
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            duration: const Duration(seconds: 2),
+                                          ),
+                                        );
                                     } finally {
                                       setState(() => _isLoading = false);
                                     }

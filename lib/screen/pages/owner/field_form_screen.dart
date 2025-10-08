@@ -304,9 +304,19 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text(
-                                  "Field updated successfully!",
+                                content: Row(
+                                  children: const [
+                                    Icon(Icons.check_circle, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text("Field updated successfully!"),
+                                  ],
                                 ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
 
@@ -317,12 +327,22 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                             );
                           } else {
                             await fieldProvider.addField(widget.venueId);
-
+                            
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text(
-                                  "Field created successfully!",
+                                content: Row(
+                                  children: const [
+                                    Icon(Icons.check_circle, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text("Field created successfully!"),
+                                  ],
                                 ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
 
