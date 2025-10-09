@@ -112,34 +112,39 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                       itemBuilder: (context, index) {
                         final venue = venueProvider.venues[index];
                         return Card(
-                          clipBehavior: Clip.antiAlias,
+                          color: Colors.white,
                           child: ListTile(
-                            tileColor: index < tileColor.length
-                                ? tileColor[index]
-                                : Theme.of(context).colorScheme.surface,
-                            leading: const Icon(Icons.business_outlined),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            leading: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/logo.png'), 
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
                             title: Text(
                               venue.name,
-                              style: TextStyle(
-                                color: index < textColor.length
-                                    ? textColor[index]
-                                    : Theme.of(context).colorScheme.onSurface,
-                              ),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(
-                              venue.description,
-                              style: TextStyle(
-                                color: index < textColor.length
-                                    ? textColor[index]
-                                    : Theme.of(context).colorScheme.onSurface,
-                              ),
+                            subtitle: Row(
+                              children: [
+                                const Icon(Icons.location_on, size: 16, color: Colors.red),
+                                const SizedBox(width: 4),
+                                Text(
+                                  venue.address,
+                                  style: const TextStyle(color: Colors.black87),
+                                ),
+                              ],
                             ),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.ownerDetailVenue,
-                                arguments: venue.venueId,
-                              );
+                            onTap: () async {
+                              final venueId = venue.venueId;
+
+                              Navigator.pushNamed( context, AppRoutes.ownerDetailVenue, arguments: venue.venueId, );
                             },
                           ),
                         );
