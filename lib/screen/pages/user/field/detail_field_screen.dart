@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/field_provider.dart';
 import 'package:football_venue_booking_app/utils/currency_utils.dart';
+import '../../../../routes.dart';
 
 class DetailScreen extends StatefulWidget {
   final String fieldId;
@@ -92,16 +93,20 @@ class _DetailFieldScreenState extends State<DetailScreen> {
                         // Book Now Button
                         ElevatedButton(
                           onPressed: () {
-                            // Add your booking functionality here
-                            // For example, navigate to the booking screen
-                            // Navigator.pushNamed(context, '/bookingScreen', arguments: fieldProvider.field!.fieldId);
+                            Navigator.pushNamed(
+                                        context,
+                                        AppRoutes.bookingField,
+                                        arguments: fieldProvider.field?.fieldId,
+                                      );
                           },
-                          child: Text("Book Now"),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green, // Button color
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            backgroundColor: Colors.green,
+                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
+                          child: const Text("Booking Field", style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold,)),
                         ),
                         const SizedBox(height: 20),
                       ],
