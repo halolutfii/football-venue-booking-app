@@ -14,6 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/master_provider.dart';
+import 'providers/booking_provider.dart';
 
 import 'widgets/appbar.dart';
 
@@ -55,6 +56,7 @@ void main() async {
         ),
         ChangeNotifierProvider(create: (_) => FieldProvider()),
         ChangeNotifierProvider(create: (_) => MasterProvider()),
+        ChangeNotifierProvider(create: (_) => BookingProvider())
       ],
       child: MyApp(),
     ),

@@ -7,6 +7,8 @@ import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/admin/auth/add_owner_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/admin/auth/detail_user_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/user/booking/booking_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/user/booking/payment_booking_screen.dart';
 import 'main.dart';
 import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
@@ -18,6 +20,7 @@ import 'screen/pages/user/venue/detail_venue_screen.dart';
 import 'screen/pages/user/field/detail_field_screen.dart';
 import 'screen/pages/admin/detail_field_admin_screen.dart';
 import 'screen/pages/admin/detail_venue_admin_screen.dart';
+import 'screen/pages/user/booking/detail_user_booking.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -38,6 +41,9 @@ class AppRoutes {
   static const String detailField= '/detailField';
   static const String detailAdminField = '/detailAdminField';
   static const String detailAdminVenue = '/detailAdminVenue';
+  static const String bookingField = '/bookingField';
+  static const String detailBookingField = '/detailBookingField';
+  static const String paymentField = '/paymentField';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -113,6 +119,19 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => DetailFieldAdminScreen(fieldId: fieldId),
         );
+      case bookingField:
+        final fieldId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => BookingFieldScreen(fieldId: fieldId),
+        );
+      case detailBookingField:
+        final bookingId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => BookingDetailScreen(bookingId: bookingId),
+        );
+      case paymentField:
+      final bookingId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => PaymentBookingScreen(bookingId: bookingId));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
