@@ -21,6 +21,8 @@ import 'screen/pages/user/field/detail_field_screen.dart';
 import 'screen/pages/admin/detail_field_admin_screen.dart';
 import 'screen/pages/admin/detail_venue_admin_screen.dart';
 import 'screen/pages/user/booking/detail_user_booking.dart';
+import 'screen/pages/owner/activity/detail_owner_booking.dart';
+import 'screen/pages/owner/activity/action_booking_screen.dart';
 
 class AppRoutes {
   static const String main = '/main';
@@ -44,6 +46,8 @@ class AppRoutes {
   static const String bookingField = '/bookingField';
   static const String detailBookingField = '/detailBookingField';
   static const String paymentField = '/paymentField';
+  static const String detailBookingOwnerField = '/detailBookingOwnerField';
+  static const String actionBooking = 'actionBooking';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -132,6 +136,14 @@ class AppRoutes {
       case paymentField:
       final bookingId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => PaymentBookingScreen(bookingId: bookingId));
+      case detailBookingOwnerField:
+        final bookingId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => BookingDetailOwnerScreen(bookingId: bookingId),
+        );
+      case actionBooking:
+        final bookingId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => ActionBookingScreen(bookingId: bookingId));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

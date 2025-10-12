@@ -10,6 +10,9 @@ class BookingProvider with ChangeNotifier {
 
   List<BookingModel> _bookings = [];
   List<BookingModel> get bookings => _bookings;
+  List<Map<String, dynamic>> _bookingsWithFieldData = [];
+  List<Map<String, dynamic>> get bookingsWithFieldData => _bookingsWithFieldData;
+
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -137,6 +140,47 @@ class BookingProvider with ChangeNotifier {
       _errorMessage = null;
     } catch (e) {
       _errorMessage = 'Failed to upload payment and update status: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadBookingsWithVenueField(String userId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _bookingsWithFieldData = await _bookingService.getBookingsWithVenueField(userId);
+
+      // Filter out bookings with "pending" status
+      _bookingsWithFieldData = _bookingsWithFieldData
+          .where((bookingMap) => bookingMap['booking']?.status != 'pending')
+          .toList();
+
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = 'Failed to fetch bookings with venue and field: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Update the status of a booking (owner)
+  Future<void> updateOwnerBookingStatus(String bookingId, String newStatus) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _bookingService.updateOwnerBookingStatus(bookingId, newStatus);
+
+      // Update locally as well
+      _selectedBooking = _selectedBooking?.copyWith(status: newStatus);
+
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = 'Failed to update status: $e';
     } finally {
       _isLoading = false;
       notifyListeners();

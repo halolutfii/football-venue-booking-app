@@ -135,4 +135,72 @@ class BookingService {
     }
   }
 
+  // Fetch venues based on user_id, then field and booking data
+  Future<List<Map<String, dynamic>>> getBookingsWithVenueField(String userId) async {
+    try {
+      // 1. Fetch venue data based on user_id
+      final venueSnapshot = await _firestore
+          .collection('venues')
+          .where('user_id', isEqualTo: userId)
+          .get();
+
+      List<Map<String, dynamic>> bookingsWithFieldData = [];
+
+      if (venueSnapshot.docs.isNotEmpty) {
+        // 2. Loop through each venue, fetch associated field and booking data
+        for (var venueDoc in venueSnapshot.docs) {
+          var venueData = venueDoc.data();
+          var venueId = venueData['uid'];
+
+          // 3. Fetch field data related to this venue
+          final fieldSnapshot = await _firestore
+              .collection('fields')
+              .where('venue_id', isEqualTo: venueId)
+              .get();
+
+          if (fieldSnapshot.docs.isNotEmpty) {
+            var fieldData = fieldSnapshot.docs.first.data();
+            var fieldId = fieldData['uid'];
+
+            // 4. Fetch booking data for this field
+            final bookingSnapshot = await _firestore
+                .collection('bookings')
+                .where('field_id', isEqualTo: fieldId)
+                .get();
+
+            if (bookingSnapshot.docs.isNotEmpty) {
+              for (var bookingDoc in bookingSnapshot.docs) {
+                var bookingData = bookingDoc.data();
+
+                // Combine the booking, venue, and field data into a map
+                bookingsWithFieldData.add({
+                  'booking': BookingModel.fromMap(bookingData),
+                  'venue': venueData,
+                  'field': fieldData,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      return bookingsWithFieldData;
+    } catch (e) {
+      throw Exception('Failed to fetch bookings, venue, or field: $e');
+    }
+  }
+
+   // Update owner booking status 
+  Future<void> updateOwnerBookingStatus(String bookingId, String newStatus) async {
+    try {
+      final bookingRef = _firestore.collection('bookings').doc(bookingId);
+
+      // Update the booking status
+      await bookingRef.update({
+        'status': newStatus,
+      });
+    } catch (e) {
+      throw Exception('Failed to update booking status: $e');
+    }
+  }
 }
