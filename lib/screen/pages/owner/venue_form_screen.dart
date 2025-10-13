@@ -7,6 +7,7 @@ import 'package:football_venue_booking_app/widgets/text_field.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class VenueFormScreen extends StatefulWidget {
   final bool isUpdateForm;
@@ -204,8 +205,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                                   onPressed: () async {
                                     await venueProvider.getLocation(context);
 
-                                    if (venueProvider.locationPermission !=
-                                        null) {
+                                    if (venueProvider.locationPermission != null) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Row(
@@ -216,7 +216,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                                                 child: Text(
                                                   venueProvider.locationPermission!,
                                                   style: TextStyle(color: Colors.white),
-                                                  overflow: TextOverflow.visible,  
+                                                  overflow: TextOverflow.visible,
                                                   softWrap: true,
                                                 ),
                                               ),
@@ -232,7 +232,21 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                                       );
                                     }
                                   },
-                                  child: Text("Set Location"),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey[350], 
+                                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16), 
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8), 
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Set Location",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -262,7 +276,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                                       child: Text(
                                         venueProvider.errorMessage!,
                                         style: TextStyle(color: Colors.white),
-                                        overflow: TextOverflow.visible,  
+                                        overflow: TextOverflow.visible,
                                         softWrap: true,
                                       ),
                                     ),
@@ -280,8 +294,7 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                             return;
                           }
 
-                          if (venueProvider.latitude == null &&
-                              venueProvider.longitude == null) {
+                          if (venueProvider.latitude == null && venueProvider.longitude == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Row(
@@ -357,11 +370,32 @@ class _VenueFormScreenState extends State<VenueFormScreen> {
                             );
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, 
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), 
+                          ),
+                        ),
                         child: venueProvider.isLoading
                             ? const CircularProgressIndicator()
                             : widget.isUpdateForm
-                            ? const Text('Update Venue')
-                            : const Text('Create Venue'),
+                                ? const Text(
+                                    'Update Venue',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Create Venue',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                       ),
                     ),
                   ],

@@ -179,7 +179,9 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                   arguments: {"isUpdateForm": false},
                 );
               },
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add_box_rounded, color: const Color.fromARGB(255, 71, 70, 70)),
+              backgroundColor: Colors.white, 
+              // child: Icon(Icons.add),
             ),
           );
   }

@@ -40,14 +40,83 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
         await bookingProvider.updateOwnerBookingStatus(widget.bookingId, _selectedStatus!);
 
         // Success Snackbar
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Booking status updated")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                      "Booking status updated!",
+                    style: TextStyle(color: Colors.white),
+                    overflow: TextOverflow.visible,  
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
 
         Navigator.pop(context);  
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please select a status")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error, color: Colors.black),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                      "Please select a status!",
+                    style: TextStyle(color: Colors.black),
+                    overflow: TextOverflow.visible,  
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.yellow,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
       }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to update status")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                      "Failed to update status!",
+                    style: TextStyle(color: Colors.white),
+                    overflow: TextOverflow.visible,  
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
     } finally {
       setState(() {
         _isSaving = false;
