@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../user/tabs/booking_user_screen.dart';
+import '../user/tabs/history_user_screen.dart';
 import '../../../widgets/appbar.dart';
 
 class BookingScreen extends StatelessWidget {
@@ -25,7 +26,7 @@ class BookingScreen extends StatelessWidget {
         body: const TabBarView(
           children: [
             BookingUserScreen(),
-            Center(child: Text('History content')),
+            BookingHistoryUserScreen()
           ],
         ),
       ),

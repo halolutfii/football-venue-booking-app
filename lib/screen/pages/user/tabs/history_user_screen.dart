@@ -1,1 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:football_venue_booking_app/providers/booking_provider.dart';
+import 'package:football_venue_booking_app/providers/field_provider.dart';
+import 'package:football_venue_booking_app/routes.dart';
+
+class BookingHistoryUserScreen extends StatefulWidget {
+  const BookingHistoryUserScreen({super.key});
+
+  @override
+  _BookingHistoryUserScreenState createState() => _BookingHistoryUserScreenState();
+}
+
+class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Load bookings when screen is initialized
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      Future.microtask(() =>
+          Provider.of<BookingProvider>(context, listen: false).getHistoryBookingByUserID(userId)
+      );
+    }
+  }
+
+  // Helper method to return status color based on booking status
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case "completed":
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Helper method to return status text based on booking status
+  String _getStatusText(String status) {
+    switch (status) {
+      case "completed":
+        return "Completed";
+      default:
+        return "Unknown";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bookingProvider = context.watch<BookingProvider>();
+
+    if (bookingProvider.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (bookingProvider.errorMessage != null) {
+      return Scaffold(
+        body: Center(child: Text(bookingProvider.errorMessage!)),
+      );
+    }
+
+    // Display a message if no bookings are found
+    if (bookingProvider.bookings.isEmpty) {
+      return Scaffold(
+        body: const Center(child: Text('No bookings found.')),
+      );
+    }
+
+    // Otherwise, display the bookings in a list
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: bookingProvider.bookings.length,
+          itemBuilder: (context, index) {
+            final booking = bookingProvider.bookings[index];
+
+            return Card(
+              color: Colors.white,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                leading: Consumer<FieldProvider>(
+                  builder: (context, fieldProvider, child) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        image: DecorationImage(
+                          image: fieldProvider.field?.fieldPhoto != null
+                              ? NetworkImage(fieldProvider.field!.fieldPhoto!)
+                              : const AssetImage('assets/images/logo.png') as ImageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    );
+                  },
+                ),
+                title: Text(booking.codeOrder),
+                subtitle: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(booking.status),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        _getStatusText(booking.status),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                  ],
+                ),
+                onTap: () async {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.detailHistoryBookingField,
+                    arguments: booking.bookingId,
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

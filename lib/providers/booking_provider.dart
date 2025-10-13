@@ -78,7 +78,9 @@ class BookingProvider with ChangeNotifier {
     try {
       final fetchedBookings = await _bookingService.getBookingByUserId(uid);
       
-      _bookings = fetchedBookings;
+      _bookings = fetchedBookings
+        .where((booking) => booking.status != 'completed')
+        .toList();
 
       _errorMessage = null;
     } catch (e) {
@@ -155,7 +157,7 @@ class BookingProvider with ChangeNotifier {
 
       // Filter out bookings with "pending" status
       _bookingsWithFieldData = _bookingsWithFieldData
-          .where((bookingMap) => bookingMap['booking']?.status != 'pending')
+          .where((bookingMap) => bookingMap['booking']?.status != 'pending' && bookingMap['booking']?.status != 'completed')
           .toList();
 
       _errorMessage = null;
@@ -184,6 +186,47 @@ class BookingProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> loadBookingHistory(String userId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _bookingsWithFieldData = await _bookingService.getBookingsWithVenueField(userId);
+
+      // Filter out bookings with "completed" status
+      _bookingsWithFieldData = _bookingsWithFieldData
+          .where((bookingMap) => bookingMap['booking']?.status == 'completed')
+          .toList();
+
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = 'Failed to fetch bookings with venue and field: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getHistoryBookingByUserID(String uid) async {
+    _isLoading = true;
+    notifyListeners();  
+
+    try {
+      final fetchedBookings = await _bookingService.getBookingByUserId(uid);
+      
+      _bookings = fetchedBookings
+        .where((booking) => booking.status == 'completed')
+        .toList();
+
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = 'Failed to fetch bookings: $e'; 
+    } finally {
+      _isLoading = false; 
+      notifyListeners();  
     }
   }
 
