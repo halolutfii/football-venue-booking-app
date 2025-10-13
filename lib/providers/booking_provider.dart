@@ -78,7 +78,9 @@ class BookingProvider with ChangeNotifier {
     try {
       final fetchedBookings = await _bookingService.getBookingByUserId(uid);
       
-      _bookings = fetchedBookings;
+      _bookings = fetchedBookings
+        .where((booking) => booking.status != 'completed')
+        .toList();
 
       _errorMessage = null;
     } catch (e) {
@@ -205,6 +207,26 @@ class BookingProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getHistoryBookingByUserID(String uid) async {
+    _isLoading = true;
+    notifyListeners();  
+
+    try {
+      final fetchedBookings = await _bookingService.getBookingByUserId(uid);
+      
+      _bookings = fetchedBookings
+        .where((booking) => booking.status == 'completed')
+        .toList();
+
+      _errorMessage = null;
+    } catch (e) {
+      _errorMessage = 'Failed to fetch bookings: $e'; 
+    } finally {
+      _isLoading = false; 
+      notifyListeners();  
     }
   }
 
