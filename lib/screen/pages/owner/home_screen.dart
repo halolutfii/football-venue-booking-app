@@ -55,13 +55,13 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Hello owner 👋🏼',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
+                          'Hallo, ${profile.name} 👋🏼',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
                       // avatar
                       Container(
                         width: 50,
@@ -97,7 +97,24 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+
+                  const SizedBox(height: 25),
+
+                  // judul
+                  Text(
+                    "Let's Create The Best Venue",
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+
+                  const Divider(
+                    thickness: 1,
+                    color: Colors.black,
+                    height: 20,
+                  ),
 
                   SizedBox(
                     height: 100,

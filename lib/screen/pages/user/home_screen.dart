@@ -13,7 +13,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: const Color(0xFFF8F9FA),
       body: Consumer<UserProvider>(
         builder: (context, profileProvider, child) {
           if (profileProvider.isLoading) {
@@ -36,10 +35,8 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.location_on, color: Color(0xFF2E7D7B)),
-                        const SizedBox(width: 6),
                         Text(
-                          'Bali, Indonesia',
+                          'Hallo, ${profile.name} 👋🏼', 
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: Colors.black87,
