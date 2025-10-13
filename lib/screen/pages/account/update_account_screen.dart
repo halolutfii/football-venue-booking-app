@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/user_provider.dart';
 
@@ -15,6 +15,11 @@ class UpdateAccountScreen extends StatefulWidget {
 
 class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
   bool isSaving = false;
+
+  final phoneFormatter = MaskTextInputFormatter(
+    mask: '+62 ###-####-####',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
 
   Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();
@@ -178,16 +183,23 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
               TextFormField(
                 controller: provider.phoneController,
                 decoration: InputDecoration(
-                  labelText: "Phone",
+                  labelText: "Phone", 
                   filled: true,
                   fillColor: Color(0xFFF8F9FA),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12), 
                   ),
                 ),
-                keyboardType: TextInputType.phone,
-                validator: (val) =>
-                    val == null || val.isEmpty ? "Phone required" : null,
+                keyboardType: TextInputType.phone, 
+                inputFormatters: [phoneFormatter], 
+                validator: (v) {
+                  if (v == null || v.isEmpty) {
+                    return "Contact is required"; // Validasi jika input kosong
+                  } else if (v.replaceAll(RegExp(r'[^0-9]'), '').length < 8) {
+                    return "Enter a valid contact number"; 
+                  }
+                  return null; 
+                },
               ),
               const SizedBox(height: 12),
 
