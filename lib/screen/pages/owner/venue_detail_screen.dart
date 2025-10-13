@@ -270,8 +270,16 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                 AppRoutes.ownerFormField,
                 arguments: {"isUpdateForm": false, "venueId": widget.venueId},
               ),
-              label: const Text('Add new field'),
-              icon: const Icon(Icons.add),
+              backgroundColor: Colors.white, 
+              label: const Text(
+                'New Field',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              icon: const Icon(Icons.add_box_rounded, color: const Color.fromARGB(255, 71, 70, 70)),
             ),
           );
   }
