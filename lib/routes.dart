@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/config/user_role.dart';
+import 'package:football_venue_booking_app/screen/pages/owner/activity/detail_history_booking.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/venue_detail_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/field_detail_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/owner/field_form_screen.dart';
@@ -47,7 +48,8 @@ class AppRoutes {
   static const String detailBookingField = '/detailBookingField';
   static const String paymentField = '/paymentField';
   static const String detailBookingOwnerField = '/detailBookingOwnerField';
-  static const String actionBooking = 'actionBooking';
+  static const String actionBooking = '/actionBooking';
+  static const String detailBookingHistoryOwnerField = '/detailBookingHistoryOwnerField';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -144,6 +146,11 @@ class AppRoutes {
       case actionBooking:
         final bookingId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ActionBookingScreen(bookingId: bookingId));
+      case detailBookingHistoryOwnerField:
+        final bookingId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => BookingDetailHistoryOwnerScreen(bookingId: bookingId),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
