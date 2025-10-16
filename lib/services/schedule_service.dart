@@ -14,7 +14,7 @@ class ScheduleService {
   }) async {
     // ambil data Field by field id
     final fieldDoc = await _db.collection('fields').doc(fieldId).get();
-    
+
     if (!fieldDoc.exists) throw Exception("Field not found");
 
     final field = FieldModel.fromMap(fieldDoc.data() as Map<String, dynamic>);
@@ -31,30 +31,29 @@ class ScheduleService {
 
     // ambil data Booking
     final bookingsSnap = await _db
-        .collection('booking')
+        .collection('bookings')
         .where('field_id', isEqualTo: fieldId)
         .get();
 
-    final bookings = bookingsSnap.docs
-        .map((doc) => BookingModel.fromMap(doc.data()))
-        .toList();
+    final bookings = bookingsSnap.docs.map((doc) {
+      return BookingModel.fromMap(doc.data());
+    }).toList();
 
-    // generate schedule buat dua bulan ke depan
     final allSchedules = <String, List<Map<String, dynamic>>>{};
+    DateTime startDate = currentDate;
 
-    // DateTime currentDate = currentDate;
-    while (!currentDate.isAfter(endDate)) {
+    while (!startDate.isAfter(endDate)) {
       final schedule = _generateScheduleOnTheFly(
         field: field,
         rules: rules,
         bookings: bookings,
-        date: currentDate,
+        date: startDate,
       );
 
-      final formattedDate = _formatDate(currentDate);
+      final formattedDate = _formatDate(startDate);
       allSchedules[formattedDate] = schedule;
 
-      currentDate = currentDate.add(const Duration(days: 1));
+      startDate = startDate.add(const Duration(days: 1));
     }
 
     return allSchedules;
@@ -74,7 +73,17 @@ class ScheduleService {
 
     List<Map<String, dynamic>> schedule = [];
     DateTime slotStart = openingTime;
-    while (openingTime.isBefore(closingTime)) {
+
+    final bookingsForDay = bookings
+        .where(
+          (b) =>
+              b.date.year == date.year &&
+              b.date.month == date.month &&
+              b.date.day == date.day,
+        )
+        .toList();
+
+    while (slotStart.isBefore(closingTime)) {
       final slotEnd = slotStart.add(Duration(minutes: slotDuration));
       // cek slot kalo lebih dari closing time
       if (slotEnd.isAfter(closingTime)) break;
@@ -87,15 +96,6 @@ class ScheduleService {
         slotEnd: slotEnd,
         defaultPrice: defaultPrice,
       );
-
-      final bookingsForDay = bookings
-          .where(
-            (b) =>
-                b.date.year == date.year &&
-                b.date.month == date.month &&
-                b.date.day == date.day,
-          )
-          .toList();
 
       // Cek slot sudah dibooking
       final booked = bookingsForDay.any((b) {
@@ -115,7 +115,7 @@ class ScheduleService {
           b.endTime.minute,
         );
 
-        // batas slot end sama kayak slot start (numpuk) biar flexible
+        // batas slot end sama kayak slot start (10-12 12-14)
         return bookingStart.isBefore(slotEnd) && bookingEnd.isAfter(slotStart);
       });
 

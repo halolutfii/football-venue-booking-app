@@ -3,11 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/models/field_model.dart';
 import 'package:football_venue_booking_app/services/field_service.dart';
+import 'package:football_venue_booking_app/services/schedule_service.dart';
 import 'package:football_venue_booking_app/utils/currency_utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class FieldProvider extends ChangeNotifier {
   final FieldService _service = FieldService();
+  final ScheduleService _scheduleService = ScheduleService();
   final ImagePicker _picker = ImagePicker();
 
   final nameController = TextEditingController();
@@ -24,11 +27,30 @@ class FieldProvider extends ChangeNotifier {
   String? openingTimeStr;
   String? closingTimeStr;
   File? photo;
+  Map<String, List<Map<String, dynamic>>> _allSchedules = {};
+  DateTime? _selectedDate;
+  int? _selectedSlotIndex;
 
   List<FieldModel> get fields => _fields;
   FieldModel? get field => _field;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
+  Map<String, List<Map<String, dynamic>>> get allSchedules => _allSchedules;
+  DateTime? get selectedDate => _selectedDate;
+  int? get selectedSlotIndex => _selectedSlotIndex;
+
+  List<DateTime> get availableDates {
+    final keys = _allSchedules.keys.toList()..sort((a, b) => a.compareTo(b));
+
+    return keys.map((k) => DateTime.parse(k)).toList();
+  }
+
+  List<Map<String, dynamic>> get selectedDaySlots {
+    if (_selectedDate == null) return [];
+    final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+
+    return _allSchedules[dateStr] ?? [];
+  }
 
   Future<void> loadAllFields() async {
     _errorMessage = null;
@@ -198,6 +220,63 @@ class FieldProvider extends ChangeNotifier {
     closingTime = null;
     photo = null;
     _field = null;
+
+    notifyListeners();
+  }
+
+  void generateSchedule(fieldId) async {
+    _isLoading = true;
+
+    try {
+      final now = DateTime.now();
+
+      final schedules = await _scheduleService.generateSchedule(
+        fieldId: fieldId,
+        currentDate: now,
+        endDate: now.add(const Duration(days: 30)),
+      );
+
+      // print("method: $schedules");
+      _allSchedules = schedules;
+
+      _selectedDate = now;
+      notifyListeners();
+
+      // schedules.forEach((date, slots) {
+      //   print('Date: $date');
+      //   for (var slot in slots) {
+      //     print(
+      //       '${slot['start_time']} - ${slot['end_time']} | Rp${slot['price']} | ${slot['status']}',
+      //     );
+      //   }
+      // });
+
+      // print("Total hari digenerate: ${schedules.length}");
+      // print("Jadwal: ${schedules.keys}");
+      // print("Jadwal hari pertama: ${schedules.keys.first}");
+      // print("Jadwal hari terakhir: ${schedules.keys.last}");
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+
+      notifyListeners();
+    }
+  }
+
+  void selectDate(DateTime date) {
+    _selectedDate = date;
+    _selectedSlotIndex = null;
+
+    notifyListeners();
+  }
+
+  void selectSlot(int index) {
+    if (_selectedSlotIndex == index) {
+      _selectedSlotIndex = null;
+    } else {
+      _selectedSlotIndex = index;
+    }
 
     notifyListeners();
   }

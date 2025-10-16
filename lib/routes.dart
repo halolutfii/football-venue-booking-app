@@ -8,9 +8,9 @@ import 'package:football_venue_booking_app/screen/pages/owner/venue_form_screen.
 import 'package:football_venue_booking_app/screen/pages/owner/home_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/admin/auth/add_owner_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/admin/auth/detail_user_screen.dart';
-import 'package:football_venue_booking_app/screen/pages/user/booking/booking_screen.dart';
 import 'package:football_venue_booking_app/screen/pages/user/booking/detail_user_history_booking.dart';
 import 'package:football_venue_booking_app/screen/pages/user/booking/payment_booking_screen.dart';
+import 'package:football_venue_booking_app/screen/pages/user/booking_screen.dart';
 import 'main.dart';
 import 'screen/splash_screen.dart';
 import 'screen/auth/login_screen.dart';
@@ -19,7 +19,7 @@ import 'screen/pages/admin/home_screen.dart';
 import 'screen/pages/account/detail_account_screen.dart';
 import 'screen/pages/account/update_account_screen.dart';
 import 'screen/pages/user/venue/detail_venue_screen.dart';
-import 'screen/pages/user/field/detail_field_screen.dart';
+import 'screen/pages/user/booking/booking_field_screen.dart';
 import 'screen/pages/admin/detail_field_admin_screen.dart';
 import 'screen/pages/admin/detail_venue_admin_screen.dart';
 import 'screen/pages/user/booking/detail_user_booking.dart';
@@ -41,16 +41,17 @@ class AppRoutes {
   static const String detailUser = '/detailUser';
   static const String personalInformation = '/personalInformation';
   static const String updateAccount = '/updateAccount';
-  static const String detailVenue= '/detailVenue';
-  static const String detailField= '/detailField';
+  static const String detailVenue = '/detailVenue';
+  static const String bookingField = '/bookingField';
   static const String detailAdminField = '/detailAdminField';
   static const String detailAdminVenue = '/detailAdminVenue';
-  static const String bookingField = '/bookingField';
   static const String detailBookingField = '/detailBookingField';
   static const String paymentField = '/paymentField';
+  static const String bookingTab = '/bookingTab';
   static const String detailBookingOwnerField = '/detailBookingOwnerField';
   static const String actionBooking = '/actionBooking';
-  static const String detailBookingHistoryOwnerField = '/detailBookingHistoryOwnerField';
+  static const String detailBookingHistoryOwnerField =
+      '/detailBookingHistoryOwnerField';
   static const String detailHistoryBookingField = '/detailHistoryBookingField';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -99,10 +100,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => AddOwnerScreen());
       case detailUser:
         final args = settings.arguments as Map<String, dynamic>;
-        final uid = args['uid'];  
-        return MaterialPageRoute(
-          builder: (_) => UserDetailScreen(uid: uid),  
-        );
+        final uid = args['uid'];
+        return MaterialPageRoute(builder: (_) => UserDetailScreen(uid: uid));
       case personalInformation:
         return MaterialPageRoute(builder: (_) => DetailAccountScreen());
       case updateAccount:
@@ -112,10 +111,10 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => DetailVenueScreen(venueId: venueId),
         );
-      case detailField:
+      case bookingField:
         final fieldId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => DetailScreen(fieldId: fieldId),
+          builder: (_) => BookingFieldScreen(fieldId: fieldId),
         );
       case detailAdminVenue:
         final venueId = settings.arguments as String;
@@ -127,19 +126,18 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => DetailFieldAdminScreen(fieldId: fieldId),
         );
-      case bookingField:
-        final fieldId = settings.arguments as String;
-        return MaterialPageRoute(
-          builder: (_) => BookingFieldScreen(fieldId: fieldId),
-        );
       case detailBookingField:
         final bookingId = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => BookingDetailScreen(bookingId: bookingId),
         );
       case paymentField:
-      final bookingId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => PaymentBookingScreen(bookingId: bookingId));
+        final bookingId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => PaymentBookingScreen(bookingId: bookingId),
+        );
+      case bookingTab:
+        return MaterialPageRoute(builder: (_) => BookingScreen());
       case detailBookingOwnerField:
         final bookingId = settings.arguments as String;
         return MaterialPageRoute(
@@ -147,7 +145,9 @@ class AppRoutes {
         );
       case actionBooking:
         final bookingId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => ActionBookingScreen(bookingId: bookingId));
+        return MaterialPageRoute(
+          builder: (_) => ActionBookingScreen(bookingId: bookingId),
+        );
       case detailBookingHistoryOwnerField:
         final bookingId = settings.arguments as String;
         return MaterialPageRoute(

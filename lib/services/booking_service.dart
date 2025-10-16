@@ -12,7 +12,7 @@ class BookingService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   // create booking 
-  Future<void> createBooking(BookingModel booking) async {
+  Future<String> createBooking(BookingModel booking) async {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
@@ -30,6 +30,8 @@ class BookingService {
 
       // Save the new booking to Firestore
       await bookingRef.set(newBooking.toJson());
+      
+      return bookingRef.id;
     } catch (e) {
       throw Exception('Failed to create booking: $e');
     }

@@ -11,8 +11,8 @@ class BookingProvider with ChangeNotifier {
   List<BookingModel> _bookings = [];
   List<BookingModel> get bookings => _bookings;
   List<Map<String, dynamic>> _bookingsWithFieldData = [];
-  List<Map<String, dynamic>> get bookingsWithFieldData => _bookingsWithFieldData;
-
+  List<Map<String, dynamic>> get bookingsWithFieldData =>
+      _bookingsWithFieldData;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -23,19 +23,23 @@ class BookingProvider with ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> createBooking(BookingModel booking) async {
-    _isLoading = true; 
+  Future<String?> createBooking(BookingModel booking) async {
+    _isLoading = true;
     notifyListeners();
 
     try {
-      await _bookingService.createBooking(booking);
-      
-      _errorMessage = null; 
+      final bookingId = await _bookingService.createBooking(booking);
+
+      _errorMessage = null;
+
+      return bookingId;
     } catch (e) {
-      _errorMessage = 'Failed to create booking: $e'; 
+      _errorMessage = 'Failed to create booking: $e';
+
+      return null;
     } finally {
-      _isLoading = false; 
-      notifyListeners(); 
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -61,33 +65,33 @@ class BookingProvider with ChangeNotifier {
 
     try {
       _bookings = await _bookingService.getBookings();
-      _errorMessage = null; 
+      _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Failed to fetch bookings: $e'; 
+      _errorMessage = 'Failed to fetch bookings: $e';
     } finally {
-      _isLoading = false; 
-      notifyListeners(); 
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   // get booking by user id
   Future<void> getBookingByUserID(String uid) async {
     _isLoading = true;
-    notifyListeners();  
+    notifyListeners();
 
     try {
       final fetchedBookings = await _bookingService.getBookingByUserId(uid);
-      
+
       _bookings = fetchedBookings
-        .where((booking) => booking.status != 'completed')
-        .toList();
+          .where((booking) => booking.status != 'completed')
+          .toList();
 
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Failed to fetch bookings: $e'; 
+      _errorMessage = 'Failed to fetch bookings: $e';
     } finally {
-      _isLoading = false; 
-      notifyListeners();  
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -97,7 +101,7 @@ class BookingProvider with ChangeNotifier {
 
     try {
       _selectedBooking = await _bookingService.getBookingById(bookingId);
-      _errorMessage = null; 
+      _errorMessage = null;
     } catch (e) {
       _errorMessage = 'Failed to fetch booking: $e';
     } finally {
@@ -106,7 +110,7 @@ class BookingProvider with ChangeNotifier {
     }
   }
 
-   // Update the status of a booking
+  // Update the status of a booking
   Future<void> updateBookingStatus(String bookingId, String newStatus) async {
     _isLoading = true;
     notifyListeners();
@@ -133,11 +137,17 @@ class BookingProvider with ChangeNotifier {
 
     try {
       // Upload the payment receipt image and update booking status
-      final receiptUrl = await _bookingService.uploadPaymentReceipt(bookingId, file);
+      final receiptUrl = await _bookingService.uploadPaymentReceipt(
+        bookingId,
+        file,
+      );
       await _bookingService.updateBookingStatus(bookingId, 'waiting');
 
       // Update the booking locally
-      _selectedBooking = _selectedBooking?.copyWith(paymentReceipt: receiptUrl, status: 'waiting');
+      _selectedBooking = _selectedBooking?.copyWith(
+        paymentReceipt: receiptUrl,
+        status: 'waiting',
+      );
 
       _errorMessage = null;
     } catch (e) {
@@ -153,11 +163,17 @@ class BookingProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _bookingsWithFieldData = await _bookingService.getBookingsWithVenueField(userId);
+      _bookingsWithFieldData = await _bookingService.getBookingsWithVenueField(
+        userId,
+      );
 
       // Filter out bookings with "pending" status
       _bookingsWithFieldData = _bookingsWithFieldData
-          .where((bookingMap) => bookingMap['booking']?.status != 'pending' && bookingMap['booking']?.status != 'completed')
+          .where(
+            (bookingMap) =>
+                bookingMap['booking']?.status != 'pending' &&
+                bookingMap['booking']?.status != 'completed',
+          )
           .toList();
 
       _errorMessage = null;
@@ -170,7 +186,10 @@ class BookingProvider with ChangeNotifier {
   }
 
   // Update the status of a booking (owner)
-  Future<void> updateOwnerBookingStatus(String bookingId, String newStatus) async {
+  Future<void> updateOwnerBookingStatus(
+    String bookingId,
+    String newStatus,
+  ) async {
     _isLoading = true;
     notifyListeners();
 
@@ -194,7 +213,9 @@ class BookingProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _bookingsWithFieldData = await _bookingService.getBookingsWithVenueField(userId);
+      _bookingsWithFieldData = await _bookingService.getBookingsWithVenueField(
+        userId,
+      );
 
       // Filter out bookings with "completed" status
       _bookingsWithFieldData = _bookingsWithFieldData
@@ -212,22 +233,21 @@ class BookingProvider with ChangeNotifier {
 
   Future<void> getHistoryBookingByUserID(String uid) async {
     _isLoading = true;
-    notifyListeners();  
+    notifyListeners();
 
     try {
       final fetchedBookings = await _bookingService.getBookingByUserId(uid);
-      
+
       _bookings = fetchedBookings
-        .where((booking) => booking.status == 'completed')
-        .toList();
+          .where((booking) => booking.status == 'completed')
+          .toList();
 
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Failed to fetch bookings: $e'; 
+      _errorMessage = 'Failed to fetch bookings: $e';
     } finally {
-      _isLoading = false; 
-      notifyListeners();  
+      _isLoading = false;
+      notifyListeners();
     }
   }
-
 }
