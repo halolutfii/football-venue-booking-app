@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 import '../models/user_model.dart';
 import '../services/user_service.dart';
 
@@ -10,7 +9,8 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final UserService _userService = UserService();
-  final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference userCollection = FirebaseFirestore.instance
+      .collection('users');
 
   // Sign in with Email & Password
   Future<User?> signInWithEmail(String email, String password) async {
@@ -27,7 +27,11 @@ class AuthService {
   }
 
   // Register with Email & Password
-  Future<User?> registerWithEmail(String email, String name, String password) async {
+  Future<User?> registerWithEmail(
+    String email,
+    String name,
+    String password,
+  ) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -68,29 +72,29 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
 
       User? user = userCredential.user;
 
       final exist = await _userService.checkUserExists(user!.uid);
       if (!exist) {
         final profile = UserModel(
-          uid: user.uid, 
-          name: user.displayName ?? "No Name", 
-          email: user.email!, 
+          uid: user.uid,
+          name: user.displayName ?? "No Name",
+          email: user.email!,
           role: "user",
           photo: user.photoURL,
-          );
-          await _userService.createUserProfile(profile);
+        );
+        await _userService.createUserProfile(profile);
       }
 
       return userCredential.user;
     } catch (e) {
-      print('Google Sign-In error: $e');
       rethrow;
     }
-  } 
+  }
 
   // Sign out
   Future<void> signOut() async {

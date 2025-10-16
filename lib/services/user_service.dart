@@ -5,8 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 
 class UserService {
-  final CollectionReference user =
-      FirebaseFirestore.instance.collection('users');
+  final CollectionReference user = FirebaseFirestore.instance.collection(
+    'users',
+  );
   final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<void> createUserProfile(UserModel profile) async {
@@ -30,7 +31,7 @@ class UserService {
     return doc.exists;
   }
 
-  // get all role owners 
+  // get all role owners
   Future<List<UserModel>> getOwner() async {
     final snapshot = await user.where("role", isEqualTo: "owner").get();
 
@@ -52,10 +53,7 @@ class UserService {
     final userSnapshot = await user.where("role", isEqualTo: "user").get();
     final ownerSnapshot = await user.where("role", isEqualTo: "owner").get();
 
-    final combinedSnapshot = [
-      ...userSnapshot.docs,
-      ...ownerSnapshot.docs
-    ];
+    final combinedSnapshot = [...userSnapshot.docs, ...ownerSnapshot.docs];
 
     return combinedSnapshot
         .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
@@ -63,34 +61,30 @@ class UserService {
   }
 
   Future<UserModel> createOwner({
-  required String email,
-  required String password,
-  required String name,
-  String role = "owner",
-}) async {
-  // Membuat akun owner di Firebase Authentication
-  final credential = await FirebaseAuth.instance
-      .createUserWithEmailAndPassword(email: email, password: password);
+    required String email,
+    required String password,
+    required String name,
+    String role = "owner",
+  }) async {
+    // Membuat akun owner di Firebase Authentication
+    final credential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
 
-  final profile = UserModel(
-    uid: credential.user!.uid,
-    name: name,
-    email: email,
-    role: role,
-  );
+    final profile = UserModel(
+      uid: credential.user!.uid,
+      name: name,
+      email: email,
+      role: role,
+    );
 
-  // Menyimpan profil owner di Firestore
-  await user.doc(profile.uid).set(profile.toMap());
+    // Menyimpan profil owner di Firestore
+    await user.doc(profile.uid).set(profile.toMap());
 
-  // Mengirim email verifikasi
-  await credential.user?.sendEmailVerification();
+    // Mengirim email verifikasi
+    await credential.user?.sendEmailVerification();
 
-  // Menambahkan log untuk memverifikasi bahwa email sudah dikirim
-  print("Email verification sent to: ${credential.user!.email}");
-
-  return profile;
-}
-
+    return profile;
+  }
 
   Future<void> deleteUser(String uid) async {
     await user.doc(uid).delete();
@@ -99,7 +93,7 @@ class UserService {
   Future<String> uploadProfilePhoto(String uid, File file) async {
     final fileName = 'public/$uid/${file.uri.pathSegments.last}';
 
-    final response = await _supabase.storage
+    await _supabase.storage
         .from('profile-photos')
         .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
 

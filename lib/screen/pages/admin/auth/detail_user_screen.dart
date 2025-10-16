@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/providers/master_provider.dart';
 import 'package:provider/provider.dart';
-import '../../../../providers/user_provider.dart';
 
 class UserDetailScreen extends StatefulWidget {
   final String uid;
@@ -9,7 +8,7 @@ class UserDetailScreen extends StatefulWidget {
   const UserDetailScreen({super.key, required this.uid});
 
   @override
-  _UserDetailScreenState createState() => _UserDetailScreenState();
+  State<UserDetailScreen> createState() => _UserDetailScreenState();
 }
 
 class _UserDetailScreenState extends State<UserDetailScreen> {

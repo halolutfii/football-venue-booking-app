@@ -25,17 +25,17 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Color> tileColor = [
-      Theme.of(context).colorScheme.primaryContainer,
-      Theme.of(context).colorScheme.tertiaryContainer,
-      Theme.of(context).colorScheme.secondaryContainer,
-    ];
+    // List<Color> tileColor = [
+    //   Theme.of(context).colorScheme.primaryContainer,
+    //   Theme.of(context).colorScheme.tertiaryContainer,
+    //   Theme.of(context).colorScheme.secondaryContainer,
+    // ];
 
-    List<Color> textColor = [
-      Theme.of(context).colorScheme.onPrimaryContainer,
-      Theme.of(context).colorScheme.onTertiaryContainer,
-      Theme.of(context).colorScheme.onSecondaryContainer,
-    ];
+    // List<Color> textColor = [
+    //   Theme.of(context).colorScheme.onPrimaryContainer,
+    //   Theme.of(context).colorScheme.onTertiaryContainer,
+    //   Theme.of(context).colorScheme.onSecondaryContainer,
+    // ];
 
     final VenueProvider venueProvider = context.watch<VenueProvider>();
     final UserProvider profileProvider = context.read<UserProvider>();
@@ -55,13 +55,13 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          'Hallo, ${profile.name} 👋🏼',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        'Hallo, ${profile.name} 👋🏼',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
                         ),
+                      ),
                       // avatar
                       Container(
                         width: 50,
@@ -110,11 +110,7 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                     ),
                   ),
 
-                  const Divider(
-                    thickness: 1,
-                    color: Colors.black,
-                    height: 20,
-                  ),
+                  const Divider(thickness: 1, color: Colors.black, height: 20),
 
                   SizedBox(
                     height: 100,
@@ -131,14 +127,17 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                         return Card(
                           color: Colors.white,
                           child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                             leading: Container(
                               width: 80,
                               height: 80,
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 image: DecorationImage(
-                                  image: AssetImage('assets/images/logo.png'), 
+                                  image: AssetImage('assets/images/logo.png'),
                                   fit: BoxFit.cover,
                                 ),
                                 borderRadius: BorderRadius.circular(8),
@@ -146,11 +145,17 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                             ),
                             title: Text(
                               venue.name,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             subtitle: Row(
                               children: [
-                                const Icon(Icons.location_on, size: 16, color: Colors.red),
+                                const Icon(
+                                  Icons.location_on,
+                                  size: 16,
+                                  color: Colors.red,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   venue.address,
@@ -161,7 +166,11 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                             onTap: () async {
                               final venueId = venue.venueId;
 
-                              Navigator.pushNamed( context, AppRoutes.ownerDetailVenue, arguments: venue.venueId, );
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.ownerDetailVenue,
+                                arguments: venueId,
+                              );
                             },
                           ),
                         );
@@ -179,8 +188,11 @@ class _OwnerHomeState extends State<OwnerHomeScreen> {
                   arguments: {"isUpdateForm": false},
                 );
               },
-              child: const Icon(Icons.add_box_rounded, color: const Color.fromARGB(255, 71, 70, 70)),
-              backgroundColor: Colors.white, 
+              backgroundColor: Colors.white,
+              child: const Icon(
+                Icons.add_box_rounded,
+                color: Color.fromARGB(255, 71, 70, 70),
+              ),
               // child: Icon(Icons.add),
             ),
           );

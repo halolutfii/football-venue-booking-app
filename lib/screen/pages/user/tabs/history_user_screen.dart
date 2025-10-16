@@ -9,7 +9,8 @@ class BookingHistoryUserScreen extends StatefulWidget {
   const BookingHistoryUserScreen({super.key});
 
   @override
-  _BookingHistoryUserScreenState createState() => _BookingHistoryUserScreenState();
+  State<BookingHistoryUserScreen> createState() =>
+      _BookingHistoryUserScreenState();
 }
 
 class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
@@ -18,12 +19,15 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
     super.initState();
 
     // Load bookings when screen is initialized
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId != null) {
-      Future.microtask(() =>
-          Provider.of<BookingProvider>(context, listen: false).getHistoryBookingByUserID(userId)
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        Provider.of<BookingProvider>(
+          context,
+          listen: false,
+        ).getHistoryBookingByUserID(userId);
+      }
+    });
   }
 
   // Helper method to return status color based on booking status
@@ -49,24 +53,19 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
   @override
   Widget build(BuildContext context) {
     final bookingProvider = context.watch<BookingProvider>();
+    final fieldProvider = context.watch<FieldProvider>();
 
     if (bookingProvider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (bookingProvider.errorMessage != null) {
-      return Scaffold(
-        body: Center(child: Text(bookingProvider.errorMessage!)),
-      );
+      return Scaffold(body: Center(child: Text(bookingProvider.errorMessage!)));
     }
 
     // Display a message if no bookings are found
     if (bookingProvider.bookings.isEmpty) {
-      return Scaffold(
-        body: const Center(child: Text('No bookings found.')),
-      );
+      return Scaffold(body: const Center(child: Text('No bookings found.')));
     }
 
     // Otherwise, display the bookings in a list
@@ -81,40 +80,76 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
             return Card(
               color: Colors.white,
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                leading: Consumer<FieldProvider>(
-                  builder: (context, fieldProvider, child) {
-                    return Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        image: DecorationImage(
-                          image: fieldProvider.field?.fieldPhoto != null
-                              ? NetworkImage(fieldProvider.field!.fieldPhoto!)
-                              : const AssetImage('assets/images/logo.png') as ImageProvider,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                leading: fieldProvider.field?.fieldPhoto != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          fieldProvider.field!.fieldPhoto!,
+                          width: 100,
                           fit: BoxFit.cover,
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                      )
+                    : Container(
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.image_outlined,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
                       ),
-                    );
-                  },
-                ),
+                // leading: Consumer<FieldProvider>(
+                //   builder: (context, fieldProvider, child) {
+                //     return fieldProvider.field?.fieldPhoto != null
+                //         ? ClipRRect(
+                //             borderRadius: BorderRadius.circular(8),
+                //             child: Image.network(
+                //               fieldProvider.field!.fieldPhoto!,
+                //               width: 100,
+                //               fit: BoxFit.cover,
+                //             ),
+                //           )
+                //         : Container(
+                //             width: 100,
+                //             decoration: BoxDecoration(
+                //               color: Colors.grey[300],
+                //               borderRadius: BorderRadius.circular(8),
+                //             ),
+                //             child: const Icon(
+                //               Icons.image_outlined,
+                //               size: 48,
+                //               color: Colors.grey,
+                //             ),
+                //           );
+                //   },
+                // ),
                 title: Text(booking.codeOrder),
                 subtitle: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _getStatusColor(booking.status),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         _getStatusText(booking.status),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-
                   ],
                 ),
                 onTap: () async {

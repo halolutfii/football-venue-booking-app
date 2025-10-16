@@ -19,12 +19,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -39,7 +37,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
               Card(
                 color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 elevation: 4,
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -49,7 +49,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 12),
                       buildTextField("Email", _emailController),
                       const SizedBox(height: 12),
-                      buildTextField("Password", _passwordController, obscure: true),
+                      buildTextField(
+                        "Password",
+                        _passwordController,
+                        obscure: true,
+                      ),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
@@ -60,26 +64,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);
 
-                                    final name = _usernameController.text.trim();
+                                    final name = _usernameController.text
+                                        .trim();
                                     final email = _emailController.text.trim();
-                                    final password = _passwordController.text.trim();
-                                    final profileProvider = Provider.of<UserProvider>(context, listen: false);
+                                    final password = _passwordController.text
+                                        .trim();
+                                    final profileProvider =
+                                        Provider.of<UserProvider>(
+                                          context,
+                                          listen: false,
+                                        );
 
                                     try {
-                                      final success = await authProvider.registerWithEmail(email, password, name, profileProvider);
+                                      final success = await authProvider
+                                          .registerWithEmail(
+                                            email,
+                                            password,
+                                            name,
+                                            profileProvider,
+                                          );
 
                                       if (success) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Row(
                                               children: [
-                                                Icon(Icons.error, color: Colors.black),
+                                                Icon(
+                                                  Icons.error,
+                                                  color: Colors.black,
+                                                ),
                                                 SizedBox(width: 8),
                                                 Expanded(
                                                   child: Text(
-                                                    authProvider.errorMessage ?? "Please verify your email.",
-                                                    style: TextStyle(color: Colors.black),
-                                                    overflow: TextOverflow.visible,  
+                                                    authProvider.errorMessage ??
+                                                        "Please verify your email.",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.visible,
                                                     softWrap: true,
                                                   ),
                                                 ),
@@ -88,25 +113,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             backgroundColor: Colors.yellow,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                            duration: const Duration(seconds: 2),
+                                            duration: const Duration(
+                                              seconds: 2,
+                                            ),
                                           ),
                                         );
-                                        
-                                        Navigator.pushReplacementNamed(context, AppRoutes.login);  
+
+                                        Navigator.pushReplacementNamed(
+                                          context,
+                                          AppRoutes.login,
+                                        );
                                       } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Row(
                                               children: [
-                                                Icon(Icons.error, color: Colors.white),
+                                                Icon(
+                                                  Icons.error,
+                                                  color: Colors.white,
+                                                ),
                                                 SizedBox(width: 8),
                                                 Expanded(
                                                   child: Text(
-                                                    authProvider.errorMessage ?? "Registration failed.",
-                                                    style: TextStyle(color: Colors.white),
-                                                    overflow: TextOverflow.visible,  
+                                                    authProvider.errorMessage ??
+                                                        "Registration failed.",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.visible,
                                                     softWrap: true,
                                                   ),
                                                 ),
@@ -115,35 +155,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             backgroundColor: Colors.red,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                            duration: const Duration(seconds: 2),
+                                            duration: const Duration(
+                                              seconds: 2,
+                                            ),
                                           ),
                                         );
                                       }
                                     } catch (e) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    authProvider.errorMessage ?? "Registration failed: $e",
-                                                    style: TextStyle(color: Colors.white),
-                                                    overflow: TextOverflow.visible,  
-                                                    softWrap: true,
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  authProvider.errorMessage ??
+                                                      "Registration failed: $e",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
                                                   ),
+                                                  overflow:
+                                                      TextOverflow.visible,
+                                                  softWrap: true,
                                                 ),
-                                              ],
-                                            ),
-                                            backgroundColor: Colors.red,
-                                            behavior: SnackBarBehavior.floating,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            duration: const Duration(seconds: 2),
+                                              ),
+                                            ],
                                           ),
-                                        );
+                                          backgroundColor: Colors.red,
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
                                     } finally {
                                       setState(() => _isLoading = false);
                                     }
@@ -157,7 +208,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           child: _isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
                               : Text(
                                   "Register",
                                   style: GoogleFonts.poppins(
@@ -175,11 +228,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const Text("Already have an account? "),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushReplacementNamed(context, AppRoutes.login);
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.login,
+                              );
                             },
                             child: Text(
                               "Login",
-                              style: TextStyle(color: Colors.blue.shade800, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                color: Colors.blue.shade800,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -197,7 +256,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   // TextField for registration
-  Widget buildTextField(String label, TextEditingController controller, {bool obscure = false}) {
+  Widget buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool obscure = false,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: obscure,
@@ -211,11 +274,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) return "$label tidak boleh kosong";
-        if (label == "Password" && value.length < 6) return "Password minimal 6 karakter";
+        if (label == "Password" && value.length < 6) {
+          return "Password minimal 6 karakter";
+        }
         return null;
       },
     );

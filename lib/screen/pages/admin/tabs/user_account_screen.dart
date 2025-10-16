@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/providers/master_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'package:football_venue_booking_app/providers/user_provider.dart'; 
 import 'package:football_venue_booking_app/routes.dart';
 
 class UserAccountScreen extends StatefulWidget {

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:football_venue_booking_app/services/schedule_service.dart';
 import 'package:football_venue_booking_app/models/user_model.dart';
 import 'package:football_venue_booking_app/services/user_service.dart';
 
@@ -96,7 +95,7 @@ class UserProvider extends ChangeNotifier {
       _user = updated;
       notifyListeners();
     } catch (e) {
-      print('Error updating profile with photo: $e');
+      _errorMessage = e.toString();
       rethrow; // Rethrow untuk penanganan lebih lanjut di UI
     } finally {
       _setLoading(false);

@@ -3,41 +3,55 @@ import 'package:provider/provider.dart';
 import '../../../../providers/booking_provider.dart';
 
 class ActionBookingScreen extends StatefulWidget {
-  final String bookingId;  
+  final String bookingId;
 
-  const ActionBookingScreen({Key? key, required this.bookingId}) : super(key: key);
+  const ActionBookingScreen({super.key, required this.bookingId});
 
   @override
-  _ActionBookingScreenState createState() => _ActionBookingScreenState();
+  State<ActionBookingScreen> createState() => _ActionBookingScreenState();
 }
 
 class _ActionBookingScreenState extends State<ActionBookingScreen> {
-  String? _selectedStatus;  
+  String? _selectedStatus;
   bool _isSaving = false;
 
-  final List<String> _statusOptions = ['pending', 'waiting', 'booked', 'completed'];
+  final List<String> _statusOptions = [
+    'pending',
+    'waiting',
+    'booked',
+    'completed',
+  ];
 
   @override
   void initState() {
     super.initState();
-    
-    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+
+    final bookingProvider = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
     final booking = bookingProvider.selectedBooking;
 
     if (booking != null) {
-      _selectedStatus = booking.status; 
+      _selectedStatus = booking.status;
     }
   }
 
   Future<void> _saveStatus(BuildContext context) async {
-    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+    final bookingProvider = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
     setState(() {
       _isSaving = true;
     });
 
     try {
       if (_selectedStatus != null) {
-        await bookingProvider.updateOwnerBookingStatus(widget.bookingId, _selectedStatus!);
+        await bookingProvider.updateOwnerBookingStatus(
+          widget.bookingId,
+          _selectedStatus!,
+        );
 
         // Success Snackbar
         ScaffoldMessenger.of(context).showSnackBar(
@@ -48,9 +62,9 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                      "Booking status updated!",
+                    "Booking status updated!",
                     style: TextStyle(color: Colors.white),
-                    overflow: TextOverflow.visible,  
+                    overflow: TextOverflow.visible,
                     softWrap: true,
                   ),
                 ),
@@ -65,7 +79,7 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
           ),
         );
 
-        Navigator.pop(context);  
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -75,9 +89,9 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                      "Please select a status!",
+                    "Please select a status!",
                     style: TextStyle(color: Colors.black),
-                    overflow: TextOverflow.visible,  
+                    overflow: TextOverflow.visible,
                     softWrap: true,
                   ),
                 ),
@@ -94,29 +108,27 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.error, color: Colors.white),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                      "Failed to update status!",
-                    style: TextStyle(color: Colors.white),
-                    overflow: TextOverflow.visible,  
-                    softWrap: true,
-                  ),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "Failed to update status!",
+                  style: TextStyle(color: Colors.white),
+                  overflow: TextOverflow.visible,
+                  softWrap: true,
                 ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            duration: const Duration(seconds: 2),
+              ),
+            ],
           ),
-        );
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          duration: const Duration(seconds: 2),
+        ),
+      );
     } finally {
       setState(() {
         _isSaving = false;
@@ -142,11 +154,11 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, 
-            crossAxisAlignment: CrossAxisAlignment.center, 
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               DropdownButtonFormField<String>(
-                value: _selectedStatus,  
+                value: _selectedStatus,
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedStatus = newValue;
@@ -180,7 +192,10 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
                     : () => _saveStatus(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 15,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -189,7 +204,11 @@ class _ActionBookingScreenState extends State<ActionBookingScreen> {
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
                         'Save',
-                        style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ],

@@ -8,7 +8,7 @@ class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
 
   @override
-  _AdminHomeScreenState createState() => _AdminHomeScreenState();
+  State<AdminHomeScreen> createState() => _AdminHomeScreenState();
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
@@ -32,7 +32,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           }
 
           if (masterProvider.chartData.isEmpty) {
-            return const Center(child: Text("No data available for the pie chart."));
+            return const Center(
+              child: Text("No data available for the pie chart."),
+            );
           }
 
           return SingleChildScrollView(
@@ -62,11 +64,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   ),
                 ),
 
-                const Divider(
-                  thickness: 1,
-                  color: Colors.black,
-                  height: 20,
-                ),
+                const Divider(thickness: 1, color: Colors.black, height: 20),
 
                 // Pie chart owner dan user
                 SizedBox(
@@ -84,14 +82,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             showChartValuesOutside: false,
                           ),
                         )
-                      : const Center(child: Text("No data available for owner/user chart.")),
+                      : const Center(
+                          child: Text(
+                            "No data available for owner/user chart.",
+                          ),
+                        ),
                 ),
 
-                const Divider(
-                  thickness: 1,
-                  color: Colors.black,
-                  height: 10,
-                ),
+                const Divider(thickness: 1, color: Colors.black, height: 10),
 
                 // Pie chart venue dan field
                 SizedBox(
@@ -108,13 +106,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             showChartValuesInPercentage: true,
                             showChartValuesOutside: false,
                           ),
-                          colorList: List.generate(masterProvider.chartDataVenueField.length, (index) {
-                            return index.isEven ? Colors.amber : Colors.lightGreen;
-                          }),
+                          colorList: List.generate(
+                            masterProvider.chartDataVenueField.length,
+                            (index) {
+                              return index.isEven
+                                  ? Colors.amber
+                                  : Colors.lightGreen;
+                            },
+                          ),
                         )
-                      : const Center(child: Text("No data available for venue/field chart.")),
+                      : const Center(
+                          child: Text(
+                            "No data available for venue/field chart.",
+                          ),
+                        ),
                 ),
-
               ],
             ),
           );

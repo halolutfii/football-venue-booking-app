@@ -148,11 +148,6 @@ class _BookingFieldScreenState extends State<BookingFieldScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Gagal membuat booking')));
     }
-
-    // setState(() {
-    //   timeSlots[selectedSlotIndex!] = {...selectedSlot, 'is_available': false};
-    //   selectedSlotIndex = null;
-    // });
   }
 
   String _generateOrderCode() {
@@ -234,7 +229,6 @@ class _BookingFieldScreenState extends State<BookingFieldScreen> {
                                       ),
                               ),
 
-                              // ===== Card Info menimpa gambar =====
                               Positioned(
                                 bottom: 0,
                                 left: 0,
