@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:football_venue_booking_app/services/schedule_service.dart';
 import 'package:football_venue_booking_app/models/user_model.dart';
 import 'package:football_venue_booking_app/services/user_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserService _userService = UserService();
-  final ScheduleService _scheduleService = ScheduleService();
 
   UserModel? _user;
   UserModel? get user => _user;
@@ -130,41 +127,6 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     } finally {
       _setLoading(false);
-    }
-  }
-
-  void generateSchedule() async {
-    _setLoading(true);
-
-    try {
-      final now = DateTime.now();
-      final twoMonthsLater = DateTime(now.year, now.month + 1, now.day);
-
-      final schedules = await _scheduleService.generateSchedule(
-        fieldId: '4Dm6tgHPqZdOUsDq0HU6',
-        currentDate: now,
-        endDate: twoMonthsLater,
-      );
-
-      schedules.forEach((date, slots) {
-        print('Date: $date');
-        for (var slot in slots) {
-          print(
-            '${slot['start_time']} - ${slot['end_time']} | Rp${slot['price']} | ${slot['status']}',
-          );
-        }
-      });
-
-      print("Total hari digenerate: ${schedules.length}");
-      print("Jadwal: ${schedules.keys}");
-      print("Jadwal hari pertama: ${schedules.keys.first}");
-      print("Jadwal hari terakhir: ${schedules.keys.last}");
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-
-      notifyListeners();
     }
   }
 

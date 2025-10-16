@@ -9,7 +9,7 @@ class BookingUserScreen extends StatefulWidget {
   const BookingUserScreen({super.key});
 
   @override
-  _BookingUserScreenState createState() => _BookingUserScreenState();
+  State<BookingUserScreen> createState() => _BookingUserScreenState();
 }
 
 class _BookingUserScreenState extends State<BookingUserScreen> {
@@ -20,8 +20,11 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
     // Load bookings when screen is initialized
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId != null) {
-      Future.microtask(() =>
-          Provider.of<BookingProvider>(context, listen: false).getBookingByUserID(userId)
+      Future.microtask(
+        () => Provider.of<BookingProvider>(
+          context,
+          listen: false,
+        ).getBookingByUserID(userId),
       );
     }
   }
@@ -63,22 +66,16 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
     final bookingProvider = context.watch<BookingProvider>();
 
     if (bookingProvider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (bookingProvider.errorMessage != null) {
-      return Scaffold(
-        body: Center(child: Text(bookingProvider.errorMessage!)),
-      );
+      return Scaffold(body: Center(child: Text(bookingProvider.errorMessage!)));
     }
 
     // Display a message if no bookings are found
     if (bookingProvider.bookings.isEmpty) {
-      return Scaffold(
-        body: const Center(child: Text('No bookings found.')),
-      );
+      return Scaffold(body: const Center(child: Text('No bookings found.')));
     }
 
     // Otherwise, display the bookings in a list
@@ -93,7 +90,10 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
             return Card(
               color: Colors.white,
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 leading: Consumer<FieldProvider>(
                   builder: (context, fieldProvider, child) {
                     return Container(
@@ -104,7 +104,8 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
                         image: DecorationImage(
                           image: fieldProvider.field?.fieldPhoto != null
                               ? NetworkImage(fieldProvider.field!.fieldPhoto!)
-                              : const AssetImage('assets/images/logo.png') as ImageProvider,
+                              : const AssetImage('assets/images/logo.png')
+                                    as ImageProvider,
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(8),
@@ -116,17 +117,22 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
                 subtitle: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _getStatusColor(booking.status),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         _getStatusText(booking.status),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-
                   ],
                 ),
                 onTap: () async {

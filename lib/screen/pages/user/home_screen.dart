@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'venue/venue_screen.dart';
 
 import '../../../../providers/user_provider.dart';
-import '../../../providers/venue_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

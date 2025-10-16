@@ -36,10 +36,7 @@ void main() async {
   );
 
   // supabase init
-  await Supabase.initialize(
-    url: Env.supabaseURL,
-    anonKey: Env.supabaseAnonKey
-  );
+  await Supabase.initialize(url: Env.supabaseURL, anonKey: Env.supabaseAnonKey);
 
   runApp(
     MultiProvider(
@@ -56,7 +53,7 @@ void main() async {
         ),
         ChangeNotifierProvider(create: (_) => FieldProvider()),
         ChangeNotifierProvider(create: (_) => MasterProvider()),
-        ChangeNotifierProvider(create: (_) => BookingProvider())
+        ChangeNotifierProvider(create: (_) => BookingProvider()),
       ],
       child: MyApp(),
     ),

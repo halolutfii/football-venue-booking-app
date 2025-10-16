@@ -63,7 +63,9 @@ class BookingModel {
       fieldId: data['field_id']?.toString() ?? '',
       codeOrder: data['code_order']?.toString() ?? '',
       price: data['price'] ?? 0,
-      date: DateTime.parse(data['date']?.toString() ?? ''),
+      date:
+          DateTime.tryParse(data['date'].toString())?.toLocal() ??
+          DateTime.now(),
       startTime: _parseTime(data['start_time']?.toString() ?? '00:00'),
       endTime: _parseTime(data['end_time']?.toString() ?? '00:00'),
       status: data['status']?.toString() ?? 'pending',
@@ -75,6 +77,7 @@ class BookingModel {
     final parts = time.split(':');
     final hour = int.tryParse(parts[0]) ?? 0;
     final minute = int.tryParse(parts[1]) ?? 0;
+
     return TimeOfDay(hour: hour, minute: minute);
   }
 
@@ -87,7 +90,7 @@ class BookingModel {
       "code_order": codeOrder,
       "price": price,
       "date": date.toIso8601String(),
-      "start_time": _formatTime(startTime),  
+      "start_time": _formatTime(startTime),
       "end_time": _formatTime(endTime),
       "status": status,
       "payment_receipt": paymentReceipt,
