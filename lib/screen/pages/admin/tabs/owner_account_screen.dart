@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:football_venue_booking_app/providers/master_provider.dart';
@@ -101,8 +100,8 @@ class _OwnerAccountState extends State<OwnerAccountScreen> {
             AppRoutes.addOwner, 
           );
         },
-        child: const Icon(Icons.person_add_alt_1_sharp, color: const Color.fromARGB(255, 71, 70, 70)),
         backgroundColor: Colors.white, 
+        child: Icon(Icons.person_add_alt_1_sharp, color: const Color.fromARGB(255, 71, 70, 70)),
       ),
     );
   }

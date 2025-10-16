@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:football_venue_booking_app/providers/master_provider.dart';
 
@@ -9,7 +8,7 @@ class VenueMasterScreen extends StatefulWidget {
   const VenueMasterScreen({super.key});
 
   @override
-  _VenueMasterScreenState createState() => _VenueMasterScreenState();
+  State<VenueMasterScreen> createState() => _VenueMasterScreenState();
 }
 
 class _VenueMasterScreenState extends State<VenueMasterScreen> {

@@ -118,21 +118,32 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                                               widget.venueId,
                                             );
 
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
                                               SnackBar(
                                                 content: Row(
                                                   children: const [
-                                                    Icon(Icons.check_circle, color: Colors.white),
+                                                    Icon(
+                                                      Icons.check_circle,
+                                                      color: Colors.white,
+                                                    ),
                                                     SizedBox(width: 8),
-                                                    Text("Field deleted successfully!"),
+                                                    Text(
+                                                      "Field deleted successfully!",
+                                                    ),
                                                   ],
                                                 ),
                                                 backgroundColor: Colors.green,
-                                                behavior: SnackBarBehavior.floating,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                 ),
-                                                duration: const Duration(seconds: 2),
+                                                duration: const Duration(
+                                                  seconds: 2,
+                                                ),
                                               ),
                                             );
 
@@ -270,7 +281,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                 AppRoutes.ownerFormField,
                 arguments: {"isUpdateForm": false, "venueId": widget.venueId},
               ),
-              backgroundColor: Colors.white, 
+              backgroundColor: Colors.white,
               label: const Text(
                 'New Field',
                 style: TextStyle(
@@ -279,7 +290,10 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                   color: Colors.black,
                 ),
               ),
-              icon: const Icon(Icons.add_box_rounded, color: const Color.fromARGB(255, 71, 70, 70)),
+              icon: const Icon(
+                Icons.add_box_rounded,
+                color: Color.fromARGB(255, 71, 70, 70),
+              ),
             ),
           );
   }

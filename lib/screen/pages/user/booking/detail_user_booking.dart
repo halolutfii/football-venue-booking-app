@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:football_venue_booking_app/providers/booking_provider.dart';
 import 'package:football_venue_booking_app/providers/field_provider.dart';
 import 'package:football_venue_booking_app/providers/venue_provider.dart';
-import 'package:football_venue_booking_app/utils/currency_utils.dart';
 import 'package:football_venue_booking_app/routes.dart';
 
 class BookingDetailScreen extends StatefulWidget {

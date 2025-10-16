@@ -3,15 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../providers/venue_provider.dart';
-import 'package:football_venue_booking_app/routes.dart';
 
 class DetailVenueAdminScreen extends StatefulWidget {
-  final String venueId; 
+  final String venueId;
 
   const DetailVenueAdminScreen({super.key, required this.venueId});
 
   @override
-  _DetailVenueAdminScreenState createState() => _DetailVenueAdminScreenState();
+  State<DetailVenueAdminScreen> createState() => _DetailVenueAdminScreenState();
 }
 
 class _DetailVenueAdminScreenState extends State<DetailVenueAdminScreen> {
@@ -19,7 +18,7 @@ class _DetailVenueAdminScreenState extends State<DetailVenueAdminScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      context.read<VenueProvider>().loadVenueById(widget.venueId); 
+      context.read<VenueProvider>().loadVenueById(widget.venueId);
     });
   }
 
@@ -40,61 +39,74 @@ class _DetailVenueAdminScreenState extends State<DetailVenueAdminScreen> {
         ),
       ),
       body: venueProvider.isLoading
-          ? const Center(child: CircularProgressIndicator()) 
+          ? const Center(child: CircularProgressIndicator())
           : venueProvider.errorMessage != null
-              ? Center(child: Text(venueProvider.errorMessage ?? ''))
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Map Section in a Card
-                        Card(
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-                                _buildMap(context, venueProvider),
-                              ],
-                            ),
-                          ),
+          ? Center(child: Text(venueProvider.errorMessage ?? ''))
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Map Section in a Card
+                    Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [_buildMap(context, venueProvider)],
                         ),
-                        const SizedBox(height: 10),
-                        // Venue Information in a separate Card
-                        Card(
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildVenueInformation(context, venueProvider),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 10),
+                    // Venue Information in a separate Card
+                    Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildVenueInformation(context, venueProvider),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-            );
+              ),
+            ),
+    );
   }
 
   // Build venue information section (address, contact, description)
-  Widget _buildVenueInformation(BuildContext context, VenueProvider venueProvider) {
+  Widget _buildVenueInformation(
+    BuildContext context,
+    VenueProvider venueProvider,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Venue Information", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text(
+          "Venue Information",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 10),
         if (venueProvider.venue?.address != null)
-          _buildListTile(Icons.location_on, "${venueProvider.venue?.address ?? 'Not Available'}"),
+          _buildListTile(
+            Icons.location_on,
+            venueProvider.venue?.address ?? 'Not Available',
+          ),
         if (venueProvider.venue?.contact != null)
-          _buildListTile(Icons.phone, "${venueProvider.venue?.contact ?? 'Not Available'}"),
+          _buildListTile(
+            Icons.phone,
+            venueProvider.venue?.contact ?? 'Not Available',
+          ),
         if (venueProvider.venue?.description != null)
-          _buildListTile(Icons.description, "${venueProvider.venue?.description ?? 'Not Available'}"),
+          _buildListTile(
+            Icons.description,
+            venueProvider.venue?.description ?? 'Not Available',
+          ),
       ],
     );
   }
@@ -104,7 +116,10 @@ class _DetailVenueAdminScreenState extends State<DetailVenueAdminScreen> {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: Colors.black87),
-      title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -114,7 +129,9 @@ class _DetailVenueAdminScreenState extends State<DetailVenueAdminScreen> {
       borderRadius: BorderRadius.circular(10),
       child: SizedBox(
         height: 200,
-        child: venueProvider.venue?.locationLat != null && venueProvider.venue?.locationLong != null
+        child:
+            venueProvider.venue?.locationLat != null &&
+                venueProvider.venue?.locationLong != null
             ? FlutterMap(
                 options: MapOptions(
                   center: LatLng(
@@ -125,8 +142,10 @@ class _DetailVenueAdminScreenState extends State<DetailVenueAdminScreen> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.example.football_venue_booking_app',
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName:
+                        'com.example.football_venue_booking_app',
                   ),
                   MarkerLayer(
                     markers: [

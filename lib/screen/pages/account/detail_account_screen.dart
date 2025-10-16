@@ -7,7 +7,7 @@ class DetailAccountScreen extends StatefulWidget {
   const DetailAccountScreen({super.key});
 
   @override
-  _DetailAccountScreenState createState() => _DetailAccountScreenState();
+  State<DetailAccountScreen> createState() => _DetailAccountScreenState();
 }
 
 class _DetailAccountScreenState extends State<DetailAccountScreen> {

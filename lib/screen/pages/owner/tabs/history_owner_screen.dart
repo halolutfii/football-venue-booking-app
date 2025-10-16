@@ -8,7 +8,7 @@ class HistoryOwnerScreen extends StatefulWidget {
   const HistoryOwnerScreen({super.key});
 
   @override
-  _HistoryOwnerScreenState createState() => _HistoryOwnerScreenState();
+  State<HistoryOwnerScreen> createState() => _HistoryOwnerScreenState();
 }
 
 class _HistoryOwnerScreenState extends State<HistoryOwnerScreen> {
@@ -18,8 +18,11 @@ class _HistoryOwnerScreenState extends State<HistoryOwnerScreen> {
 
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId != null) {
-      Future.microtask(() =>
-          Provider.of<BookingProvider>(context, listen: false).loadBookingHistory(userId)
+      Future.microtask(
+        () => Provider.of<BookingProvider>(
+          context,
+          listen: false,
+        ).loadBookingHistory(userId),
       );
     }
   }
@@ -49,9 +52,7 @@ class _HistoryOwnerScreenState extends State<HistoryOwnerScreen> {
     final bookingHistoryProvider = context.watch<BookingProvider>();
 
     if (bookingHistoryProvider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (bookingHistoryProvider.errorMessage != null) {
@@ -72,14 +73,18 @@ class _HistoryOwnerScreenState extends State<HistoryOwnerScreen> {
         child: ListView.builder(
           itemCount: bookingHistoryProvider.bookingsWithFieldData.length,
           itemBuilder: (context, index) {
-            final bookingMap = bookingHistoryProvider.bookingsWithFieldData[index];
+            final bookingMap =
+                bookingHistoryProvider.bookingsWithFieldData[index];
             final booking = bookingMap['booking'];
-            final fieldData = bookingMap['field']; 
+            final fieldData = bookingMap['field'];
 
             return Card(
               color: Colors.white,
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 leading: fieldData != null
                     ? Container(
                         width: 80,
@@ -88,27 +93,34 @@ class _HistoryOwnerScreenState extends State<HistoryOwnerScreen> {
                           color: Colors.grey[200],
                           image: DecorationImage(
                             image: fieldData['field_photo'] != null
-                                ? NetworkImage(fieldData['field_photo']) 
-                                : const AssetImage('assets/images/logo.png') as ImageProvider,
+                                ? NetworkImage(fieldData['field_photo'])
+                                : const AssetImage('assets/images/logo.png')
+                                      as ImageProvider,
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                       )
                     : const Icon(Icons.error),
-                title: Text(booking.codeOrder),  
+                title: Text(booking.codeOrder),
                 subtitle: Row(
                   children: [
                     // Display status of booking
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _getStatusColor(booking.status),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         _getStatusText(booking.status),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

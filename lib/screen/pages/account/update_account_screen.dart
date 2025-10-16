@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import '../../../providers/auth_provider.dart';
 import '../../../providers/user_provider.dart';
 
 class UpdateAccountScreen extends StatefulWidget {
@@ -68,7 +67,6 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
       Navigator.pop(context); 
 
     } catch (error) {
-      print('Error updating profile: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
