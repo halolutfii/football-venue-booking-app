@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/models/field_model.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:football_venue_booking_app/providers/booking_provider.dart';
@@ -27,6 +28,8 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
           listen: false,
         ).getHistoryBookingByUserID(userId);
       }
+
+      context.read<FieldProvider>().loadAllFields();
     });
   }
 
@@ -55,6 +58,7 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
     final bookingProvider = context.watch<BookingProvider>();
     final fieldProvider = context.watch<FieldProvider>();
 
+
     if (bookingProvider.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -76,6 +80,11 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
           itemCount: bookingProvider.bookings.length,
           itemBuilder: (context, index) {
             final booking = bookingProvider.bookings[index];
+            // final booking = bookingProvider.bookings[index];
+            final field = fieldProvider.fields.firstWhere(
+              (f) => f.fieldId == booking.fieldId,
+              orElse: () => FieldModel.empty(),
+            );
 
             return Card(
               color: Colors.white,
@@ -84,11 +93,11 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
                   horizontal: 12,
                   vertical: 8,
                 ),
-                leading: fieldProvider.field?.fieldPhoto != null
+                leading: field.fieldPhoto != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                          fieldProvider.field!.fieldPhoto!,
+                          field.fieldPhoto!,
                           width: 100,
                           fit: BoxFit.cover,
                         ),
@@ -105,31 +114,6 @@ class _BookingHistoryUserScreenState extends State<BookingHistoryUserScreen> {
                           color: Colors.grey,
                         ),
                       ),
-                // leading: Consumer<FieldProvider>(
-                //   builder: (context, fieldProvider, child) {
-                //     return fieldProvider.field?.fieldPhoto != null
-                //         ? ClipRRect(
-                //             borderRadius: BorderRadius.circular(8),
-                //             child: Image.network(
-                //               fieldProvider.field!.fieldPhoto!,
-                //               width: 100,
-                //               fit: BoxFit.cover,
-                //             ),
-                //           )
-                //         : Container(
-                //             width: 100,
-                //             decoration: BoxDecoration(
-                //               color: Colors.grey[300],
-                //               borderRadius: BorderRadius.circular(8),
-                //             ),
-                //             child: const Icon(
-                //               Icons.image_outlined,
-                //               size: 48,
-                //               color: Colors.grey,
-                //             ),
-                //           );
-                //   },
-                // ),
                 title: Text(booking.codeOrder),
                 subtitle: Row(
                   children: [

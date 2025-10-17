@@ -238,9 +238,11 @@ class BookingProvider with ChangeNotifier {
     try {
       final fetchedBookings = await _bookingService.getBookingByUserId(uid);
 
-      _bookings = fetchedBookings
-          .where((booking) => booking.status == 'completed')
-          .toList();
+      _bookings =
+          fetchedBookings
+              .where((booking) => booking.status == 'completed')
+              .toList()
+            ..sort((a, b) => b.codeOrder.compareTo(a.codeOrder));
 
       _errorMessage = null;
     } catch (e) {

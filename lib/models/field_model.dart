@@ -95,4 +95,16 @@ class FieldModel {
 
     return "$hour:$minute";
   }
+
+  factory FieldModel.empty() => FieldModel(
+    fieldId: null,
+    venueId: '',
+    name: '',
+    defaultPrice: 0,
+    specifications: '',
+    openingTime: const TimeOfDay(hour: 0, minute: 0),
+    closingTime: const TimeOfDay(hour: 0, minute: 0),
+    slotDuration: 0,
+    fieldPhoto: null,
+  );
 }

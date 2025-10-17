@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:football_venue_booking_app/models/field_model.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:football_venue_booking_app/providers/booking_provider.dart';
@@ -18,15 +19,17 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
     super.initState();
 
     // Load bookings when screen is initialized
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId != null) {
-      Future.microtask(
-        () => Provider.of<BookingProvider>(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        Provider.of<BookingProvider>(
           context,
           listen: false,
-        ).getBookingByUserID(userId),
-      );
-    }
+        ).getBookingByUserID(userId);
+      }
+
+      context.read<FieldProvider>().loadAllFields();
+    });
   }
 
   // Helper method to return status color based on booking status
@@ -64,6 +67,14 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
   @override
   Widget build(BuildContext context) {
     final bookingProvider = context.watch<BookingProvider>();
+    final fieldProvider = context.watch<FieldProvider>();
+
+    final orderedFields = bookingProvider.bookings.map((booking) {
+      return fieldProvider.fields.firstWhere(
+        (f) => f.fieldId == booking.fieldId,
+        orElse: () => FieldModel.empty(),
+      );
+    }).toList();
 
     if (bookingProvider.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -86,6 +97,7 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
           itemCount: bookingProvider.bookings.length,
           itemBuilder: (context, index) {
             final booking = bookingProvider.bookings[index];
+            final field = orderedFields[index];
 
             return Card(
               color: Colors.white,
@@ -94,25 +106,27 @@ class _BookingUserScreenState extends State<BookingUserScreen> {
                   horizontal: 12,
                   vertical: 8,
                 ),
-                leading: Consumer<FieldProvider>(
-                  builder: (context, fieldProvider, child) {
-                    return Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        image: DecorationImage(
-                          image: fieldProvider.field?.fieldPhoto != null
-                              ? NetworkImage(fieldProvider.field!.fieldPhoto!)
-                              : const AssetImage('assets/images/logo.png')
-                                    as ImageProvider,
+                leading: field.fieldPhoto != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          field.fieldPhoto!,
+                          width: 100,
                           fit: BoxFit.cover,
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                      )
+                    : Container(
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.image_outlined,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
                       ),
-                    );
-                  },
-                ),
                 title: Text(booking.codeOrder),
                 subtitle: Row(
                   children: [

@@ -19,9 +19,10 @@ class _BookingHistoryDetailScreenState
   @override
   void initState() {
     super.initState();
-    context.read<BookingProvider>().getBookingDetailsById(widget.bookingId);
 
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BookingProvider>().getBookingDetailsById(widget.bookingId);
+
       final booking = context.read<BookingProvider>().selectedBooking;
       if (booking != null) {
         context.read<FieldProvider>().loadFieldById(booking.fieldId);
@@ -66,13 +67,36 @@ class _BookingHistoryDetailScreenState
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            fieldProvider.field?.fieldPhoto ??
-                                'assets/images/logo.png',
-                            width: double.infinity,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
+                          child: fieldProvider.field?.fieldPhoto != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    fieldProvider.field!.fieldPhoto!,
+                                    width: double.infinity,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.image_outlined,
+                                    size: 48,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                          // child: Image.network(
+                          //   fieldProvider.field?.fieldPhoto ??
+                          //       'assets/images/logo.png',
+                          //   width: double.infinity,
+                          //   height: 200,
+                          //   fit: BoxFit.cover,
+                          // ),
                         ),
                         // Status label on top of the image
                         Positioned(
