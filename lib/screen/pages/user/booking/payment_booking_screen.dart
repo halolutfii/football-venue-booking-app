@@ -43,9 +43,23 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
       );
 
       // Success Snackbar
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Payment and Status Updated")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text("Payment and Status Waiting!"),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
 
       Navigator.pop(context);
     } catch (error) {
