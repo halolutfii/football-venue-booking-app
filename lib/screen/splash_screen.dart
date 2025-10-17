@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../routes.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -33,15 +35,15 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,  
-          crossAxisAlignment: CrossAxisAlignment.center, 
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             AnimatedOpacity(
               opacity: _visible ? 1.0 : 0.0,
               duration: const Duration(seconds: 2),
               child: AnimatedContainer(
                 duration: const Duration(seconds: 2),
-                width: _visible ? 230 : 100,  
+                width: _visible ? 230 : 100,
                 height: _visible ? 230 : 100,
                 child: Image.asset(
                   "assets/images/logo.png",
@@ -66,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
               opacity: _visible ? 1.0 : 0.0,
               duration: const Duration(seconds: 2),
               child: SizedBox(
-                width: 150, 
+                width: 150,
                 child: const LinearProgressIndicator(
                   color: Color(0xFF2E3A59),
                   backgroundColor: Colors.blueGrey,

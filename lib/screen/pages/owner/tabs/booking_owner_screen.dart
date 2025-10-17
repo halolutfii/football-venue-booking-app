@@ -8,7 +8,7 @@ class BookingOwnerScreen extends StatefulWidget {
   const BookingOwnerScreen({super.key});
 
   @override
-  _BookingOwnerScreenState createState() => _BookingOwnerScreenState();
+  State<BookingOwnerScreen> createState() => _BookingOwnerScreenState();
 }
 
 class _BookingOwnerScreenState extends State<BookingOwnerScreen> {
@@ -18,8 +18,11 @@ class _BookingOwnerScreenState extends State<BookingOwnerScreen> {
 
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId != null) {
-      Future.microtask(() =>
-          Provider.of<BookingProvider>(context, listen: false).loadBookingsWithVenueField(userId)
+      Future.microtask(
+        () => Provider.of<BookingProvider>(
+          context,
+          listen: false,
+        ).loadBookingsWithVenueField(userId),
       );
     }
   }
@@ -61,21 +64,15 @@ class _BookingOwnerScreenState extends State<BookingOwnerScreen> {
     final bookingProvider = context.watch<BookingProvider>();
 
     if (bookingProvider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (bookingProvider.errorMessage != null) {
-      return Scaffold(
-        body: Center(child: Text(bookingProvider.errorMessage!)),
-      );
+      return Scaffold(body: Center(child: Text(bookingProvider.errorMessage!)));
     }
 
     if (bookingProvider.bookingsWithFieldData.isEmpty) {
-      return Scaffold(
-        body: const Center(child: Text('No bookings found.')),
-      );
+      return Scaffold(body: const Center(child: Text('No bookings found.')));
     }
 
     return Scaffold(
@@ -86,12 +83,15 @@ class _BookingOwnerScreenState extends State<BookingOwnerScreen> {
           itemBuilder: (context, index) {
             final bookingMap = bookingProvider.bookingsWithFieldData[index];
             final booking = bookingMap['booking'];
-            final fieldData = bookingMap['field']; 
+            final fieldData = bookingMap['field'];
 
             return Card(
               color: Colors.white,
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 leading: fieldData != null
                     ? Container(
                         width: 80,
@@ -100,27 +100,34 @@ class _BookingOwnerScreenState extends State<BookingOwnerScreen> {
                           color: Colors.grey[200],
                           image: DecorationImage(
                             image: fieldData['field_photo'] != null
-                                ? NetworkImage(fieldData['field_photo']) 
-                                : const AssetImage('assets/images/logo.png') as ImageProvider,
+                                ? NetworkImage(fieldData['field_photo'])
+                                : const AssetImage('assets/images/logo.png')
+                                      as ImageProvider,
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                       )
                     : const Icon(Icons.error),
-                title: Text(booking.codeOrder),  
+                title: Text(booking.codeOrder),
                 subtitle: Row(
                   children: [
                     // Display status of booking
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _getStatusColor(booking.status),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         _getStatusText(booking.status),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

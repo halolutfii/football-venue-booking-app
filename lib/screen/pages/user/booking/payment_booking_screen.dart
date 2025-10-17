@@ -5,12 +5,12 @@ import 'package:provider/provider.dart';
 import '../../../../providers/booking_provider.dart';
 
 class PaymentBookingScreen extends StatefulWidget {
-  final String bookingId;  
+  final String bookingId;
 
-  const PaymentBookingScreen({Key? key, required this.bookingId}) : super(key: key);
+  const PaymentBookingScreen({super.key, required this.bookingId});
 
   @override
-  _PaymentBookingScreenState createState() => _PaymentBookingScreenState();
+  State<PaymentBookingScreen> createState() => _PaymentBookingScreenState();
 }
 
 class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
@@ -28,13 +28,19 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
   }
 
   Future<void> _savePayment(BuildContext context) async {
-    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+    final bookingProvider = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
     setState(() {
       _isSaving = true;
     });
 
     try {
-      await bookingProvider.uploadPaymentAndUpdateStatus(widget.bookingId, _selectedFile!);
+      await bookingProvider.uploadPaymentAndUpdateStatus(
+        widget.bookingId,
+        _selectedFile!,
+      );
 
       // Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,9 +61,11 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
         ),
       );
 
-      Navigator.pop(context);  
+      Navigator.pop(context);
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to update payment")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to update payment")));
     } finally {
       setState(() {
         _isSaving = false;
@@ -83,8 +91,8 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, 
-            crossAxisAlignment: CrossAxisAlignment.center, 
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (_selectedFile != null)
                 Column(
@@ -98,7 +106,10 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
                   ],
                 )
               else
-                const Text('No image selected.', style: TextStyle(fontSize: 16)),
+                const Text(
+                  'No image selected.',
+                  style: TextStyle(fontSize: 16),
+                ),
 
               const SizedBox(height: 20),
 
@@ -107,12 +118,22 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
                 onPressed: _pickImage,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text('Pick Payment Receipt', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),),
+                child: const Text(
+                  'Pick Payment Receipt',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -122,7 +143,10 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
                     : () => _savePayment(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 15,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -131,7 +155,11 @@ class _PaymentBookingScreenState extends State<PaymentBookingScreen> {
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
                         'Save',
-                        style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ],

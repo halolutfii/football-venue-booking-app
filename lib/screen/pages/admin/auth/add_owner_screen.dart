@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:football_venue_booking_app/providers/master_provider.dart';
-import '../../../../routes.dart';
 
 class AddOwnerScreen extends StatefulWidget {
   const AddOwnerScreen({super.key});
@@ -18,7 +17,7 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -146,7 +145,7 @@ class _AddOwnerScreenState extends State<AddOwnerScreen> {
                                                   SizedBox(width: 8),
                                                   Expanded(
                                                     child: Text(
-                                                      masterProvider.errorMessage! ?? "Owner created failed!",
+                                                      masterProvider.errorMessage ?? "Owner created failed!",
                                                       style: TextStyle(color: Colors.white),
                                                       overflow: TextOverflow.visible,  
                                                       softWrap: true,

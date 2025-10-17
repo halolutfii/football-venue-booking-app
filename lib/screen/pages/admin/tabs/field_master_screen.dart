@@ -8,7 +8,7 @@ class FieldMasterScreen extends StatefulWidget {
   const FieldMasterScreen({super.key});
 
   @override
-  _FieldMasterScreenState createState() => _FieldMasterScreenState();
+  State<FieldMasterScreen> createState() => _FieldMasterScreenState();
 }
 
 class _FieldMasterScreenState extends State<FieldMasterScreen> {
@@ -21,7 +21,7 @@ class _FieldMasterScreenState extends State<FieldMasterScreen> {
   @override
   Widget build(BuildContext context) {
     var fieldMasterProvider = context.watch<MasterProvider>();
-    var fieldsMaster = fieldMasterProvider.fields; 
+    var fieldsMaster = fieldMasterProvider.fields;
 
     if (fieldMasterProvider.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -46,7 +46,10 @@ class _FieldMasterScreenState extends State<FieldMasterScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 leading: field.fieldPhoto != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
@@ -70,7 +73,10 @@ class _FieldMasterScreenState extends State<FieldMasterScreen> {
                           color: Colors.grey,
                         ),
                       ),
-                title: Text(field.name, style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                title: Text(
+                  field.name,
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                ),
                 onTap: () => Navigator.pushNamed(
                   context,
                   AppRoutes.detailAdminField,

@@ -51,7 +51,7 @@ class BookingProvider with ChangeNotifier {
           .get();
 
       return querySnapshot.docs.map((doc) {
-        return BookingModel.fromMap(doc.data() as Map<String, dynamic>);
+        return BookingModel.fromMap(doc.data());
       }).toList();
     } catch (e) {
       throw Exception('Failed to fetch bookings for the field: $e');
