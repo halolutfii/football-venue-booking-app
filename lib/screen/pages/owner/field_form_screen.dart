@@ -190,11 +190,30 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ElevatedButton.icon(
-                                    onPressed: fieldProvider.pickImage,
-                                    icon: const Icon(Icons.image, size: 18),
-                                    label: const Text('Pick Image'),
-                                  ),
+                                 ElevatedButton.icon(
+  onPressed: fieldProvider.pickImage,
+  icon: const Icon(
+    Icons.image,
+    size: 20,
+    color: Colors.white, // Warna ikon putih agar kontras
+  ),
+  label: const Text(
+    'Pick Image',
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  style: ButtonStyle(
+    backgroundColor: MaterialStateProperty.all(Colors.blueAccent), // Warna latar belakang tombol
+    foregroundColor: MaterialStateProperty.all(Colors.white), // Warna teks dan ikon
+    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12), // Sudut lebih halus
+    )),
+    padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 12, horizontal: 16)), // Padding tombol
+    elevation: MaterialStateProperty.all(5), // Bayangan untuk efek 3D
+  ),
+),
                                   const SizedBox(height: 12),
 
                                   fieldProvider.photo != null ||
@@ -353,11 +372,32 @@ class _FieldFormScreenState extends State<FieldFormScreen> {
                             );
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, 
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8), 
+                          ),
+                        ),
                         child: fieldProvider.isLoading
                             ? Center(child: CircularProgressIndicator())
                             : widget.isUpdateForm
-                            ? Text('Edit Field')
-                            : Text('Add Field'),
+                            ? const Text(
+                                    'Edit Field',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Add Field',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                       ),
                     ),
                   ],
